@@ -1,3 +1,5 @@
+#pragma once
+
 #include "./basic_element.h"
 
 using namespace cry;

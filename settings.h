@@ -12,6 +12,7 @@
 #include <fstream>
 #include <stack>
 #include <regex>
+#include <thread>
 
 #include "Interpretator/cparse/shunting-yard.h"
 

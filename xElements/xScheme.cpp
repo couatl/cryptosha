@@ -10,17 +10,21 @@ cipher_scheme::cipher_scheme(size_type text_size, size_type key_size, size_type 
 {
 	factory_package pack;
 	pack.element_key = element_keys::buffer;
-	pack.element_name = scheme::names::text;
+
+	pack.name_for_scheme = scheme::names::text;
+	pack.index_for_scheme = 0;
 	pack.iosize = { text_size, text_size };
 
 	add_element(pack);
 
-	pack.element_name = scheme::names::key;
+	pack.name_for_scheme = scheme::names::key;
+	pack.index_for_scheme = 0;
 	pack.iosize = { key_size, key_size };
 
 	add_element(pack);
 
-	pack.element_name = scheme::names::cipher;
+	pack.name_for_scheme = scheme::names::cipher;
+	pack.index_for_scheme = 0;
 	pack.iosize = { out_size, out_size };
 
 	add_element(pack);
@@ -35,7 +39,7 @@ cipher_scheme& cipher_scheme::add_element(const factory_package& element_package
 	if (m_name_id.find(full_name) != m_name_id.end())
 			throw exception_t(error_messages::el_exists);
 	
-	auto current_id = get_id();
+ 	auto current_id = get_id();
 			
 	m_name_id[full_name] = current_id;
 

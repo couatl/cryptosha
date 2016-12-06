@@ -430,8 +430,6 @@ report_t ns_c_a::operations::goto_after::doit(handler_t& handler)
 
 	auto option = any_cast<code::types::goto_after>(handler.cursor->command);
 		
-	/*if (destination == 4)
-		throw std::invalid_argument("dest = 4");*/
 
 	for (; it != handler.code.end(); ++it)
 	{

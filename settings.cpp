@@ -1,11 +1,10 @@
-#include "settings.h"
+#include "./settings.h"
 
 
 using namespace cry;
 
-namespace foo {
 
-	string_t bitset_to_str(const bitset_t& bs, size_type size)
+string_t foo::bitset_to_str(const bitset_t& bs, size_type size)
 	{
 		if (bs.size() != size)
 			throw std::invalid_argument(error_messages::inv_input);
@@ -20,7 +19,7 @@ namespace foo {
 		return str;
 	}
 
-	bitset_t str_to_bitset(const string_t& str_bits, size_type size)
+	bitset_t foo::str_to_bitset(const string_t& str_bits, size_type size)
 	{
 		bitset_t bs(size);
 
@@ -45,7 +44,7 @@ namespace foo {
 	}
 
 
-	std::vector<bitset_t> mask_to_bitset(const string_t & str)
+	std::vector<bitset_t> foo::mask_to_bitset(const string_t & str)
 	{
 		/*if (str.size() != size)
 		throw std::invalid_argument(msg::inv_input);*/
@@ -88,7 +87,7 @@ namespace foo {
 
 
 
-	bitset_t hex_to_bitset(const string_t & str, size_type size)
+	bitset_t foo::hex_to_bitset(const string_t & str, size_type size)
 	{
 		string_t buf;
 
@@ -98,7 +97,7 @@ namespace foo {
 		return bitset_t(buf.substr(buf.length() - size, size));
 	}
 
-	string_t bitset_to_hex(const bitset_t& bs)
+	string_t foo::bitset_to_hex(const bitset_t& bs)
 	{
 		string_t buf, str, res;
 		to_string(bs, str);
@@ -134,7 +133,7 @@ namespace foo {
 	}
 
 
-	int_vector get_reverse(const int_vector& vector)
+	int_vector foo::get_reverse(const int_vector& vector)
 	{
 		int_vector reversed(vector.size());
 
@@ -146,25 +145,37 @@ namespace foo {
 		return reversed;
 	}
 
-	bool is_invertible(const int_vector& vector)
+	bool foo::is_invertible(const int_vector& vector)
 	{
-		int_vector::value_type sum = 0;
-	
+		std::set<int_vector::value_type> set(vector.cbegin(), vector.cend());
+
+		if (set.size() != vector.size())
+			return false;
+
+		/*std::thread set_clear([&set]() { set.clear(); });
+		set_clear.detach();*/
+
+		set.clear();
+
+		int_vector::value_type max = 0;
+
 		std::for_each(vector.cbegin(), vector.cend(), 
-			[&sum](int_vector::value_type value) 
+			[&max](int_vector::value_type value)
 			{
-				sum += value;
+				if (value > max)
+					max = value;
 			}
 		);
 
-		return sum * 2 == vector.size() * (vector.size() - 1);
+		
+
+		return (max + 1 == vector.size());
 	}
 
 
-	bool get_bit(const size_type & value, size_type pos)
+	bool foo::get_bit(const size_type & value, size_type pos)
 	{
 		return (value & (1 << pos));
 	}
 
 
-}

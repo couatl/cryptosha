@@ -1,13 +1,16 @@
 
-#include "./settings.h"
+#include "./cryptosha.hpp"
 
 
 int main()
 {
+	std::ifstream for_file("for.txt");
+	
+	std::cout << std::boolalpha << for_file.good() << std::endl;
 
-	auto bs = cry::foo::str_to_bitset(cry::string_t("1011 0011 0001 0001"), 16);
-	auto b1 = cry::foo::is_invertible(cry::int_vector({ 1, 3, 4, 0, 2 }));
-	auto b2 = cry::foo::is_invertible(cry::int_vector({ 1, 3, 4, 0, 2, 6 }));
+	cryptosha::anaconda::interpretator anaconda(for_file, std::cout);
+
+	anaconda.read().do_code();
 
 	system("pause");
 	return 0;

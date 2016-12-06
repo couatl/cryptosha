@@ -1,3 +1,5 @@
+#pragma once 
+
 #include "../xElements/xScheme.h"
 #include "reader/Reader.h"
 
@@ -122,7 +124,9 @@ namespace cryptosha {
 			using operations_t = std::map<code::keyword_t, operation_ptr_t>;
 
 		public:
-			interpretator(std::basic_istream<char, std::char_traits<char>>& in, std::basic_ostream<char, std::char_traits<char>>& out) : reader(in, out)
+			interpretator(std::basic_istream<char, std::char_traits<char>>& in, \
+				std::basic_ostream<char, std::char_traits<char>>& out) 
+				 : reader(in, out)
 			{
 				handler.schemes[this_scheme_name] = scheme_ptr(new scheme(8,8,8));
 				operations[code::keyword_t::add_element] = std::move(operation_ptr_t(new operations::add_element()));
