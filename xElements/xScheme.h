@@ -72,6 +72,8 @@ public:
 	using element_name = full_name_t;
 	using id = id_t;
 	using id_bitset = std::map<id_t, bitset_t>;
+	using layer_type = std::map<full_name_t, element_ptr>;
+	using layer_bitsets_type = std::map<full_name_t, bitset_t>;
 
 public:
 	cipher_scheme() = delete;
