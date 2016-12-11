@@ -155,23 +155,14 @@ string_t foo::bitset_to_str(const bitset_t& bs, size_type size)
 		/*std::thread set_clear([&set]() { set.clear(); });
 		set_clear.detach();*/
 
-		set.clear();
 
-		int_vector::value_type max = 0;
-
-		std::for_each(vector.cbegin(), vector.cend(), 
-			[&max](int_vector::value_type value)
-			{
-				if (value > max)
-					max = value;
-			}
-		);
-
-		
-
-		return (max + 1 == vector.size());
+		return (*set.begin() == 0 && *set.rbegin() + 1 == vector.size());
 	}
 
+	int_t foo::to_int_t(const string_t& str) 
+	{
+		return std::stoull(str);
+	}
 
 	bool foo::get_bit(const size_type & value, size_type pos)
 	{

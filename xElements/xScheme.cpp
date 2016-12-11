@@ -6,35 +6,40 @@ using namespace cry::elements;
 
 cipher_scheme::cipher_scheme(size_type text_size, size_type key_size, size_type out_size)
 	: basic_element(text_size + key_size, out_size), m_key_size(key_size), m_text_size(text_size),
-	m_key(key_size), m_text(text_size)
+	m_key(key_size), m_text(text_size),
+	m_wires([](const id_pair_t& lhs, const id_pair_t& rhs)->bool { return lhs.tie() < rhs.tie(); }),
+	m_name_id([](const full_name_t& lhs, const full_name_t& rhs)->bool { return lhs.tie() < rhs.tie(); })
 {
 	factory_package pack;
+
 	pack.element_key = element_keys::buffer;
 
-	pack.name_for_scheme = scheme::names::text;
-	pack.index_for_scheme = 0;
+
+	pack.scheme_options.element_name = scheme::names::text;
+	pack.scheme_options.element_index = 0;
 	pack.iosize = { text_size, text_size };
 
 	add_element(pack);
 
-	pack.name_for_scheme = scheme::names::key;
-	pack.index_for_scheme = 0;
+	pack.scheme_options.element_name = scheme::names::key;
+	pack.scheme_options.element_index = 0;
 	pack.iosize = { key_size, key_size };
 
 	add_element(pack);
 
-	pack.name_for_scheme = scheme::names::cipher;
-	pack.index_for_scheme = 0;
+	pack.scheme_options.element_name = scheme::names::cipher;
+	pack.scheme_options.element_index = 0;
 	pack.iosize = { out_size, out_size };
 
 	add_element(pack);
 }
 
 
-cipher_scheme& cipher_scheme::add_element(const factory_package& element_package)
+id_t cipher_scheme::add_element(const factory_package& element_package)
 {
-
-	auto full_name = full_name_t(element_package.name_for_scheme, element_package.index_for_scheme);
+	
+	auto full_name = full_name_t(element_package.scheme_options.element_name, 
+								element_package.scheme_options.element_index);
 
 	if (m_name_id.find(full_name) != m_name_id.end())
 			throw exception_t(error_messages::el_exists);
@@ -47,7 +52,7 @@ cipher_scheme& cipher_scheme::add_element(const factory_package& element_package
 			
 	++m_el_count;
 
-	return *this;
+	return current_id;
 }
 
 id_t cipher_scheme::get_id()
@@ -62,15 +67,25 @@ cipher_scheme & cipher_scheme::set_key(const string_t& key_vector)
 	return *this;
 }
 
-cipher_scheme & cipher_scheme::set_text(const string_t& text_vector)
+cipher_scheme& cipher_scheme::set_text(const string_t& text_vector)
 {
 	m_elements[ m_name_id.at(full_name_t(scheme::names::text)) ]->set_input(text_vector);
 	return *this;
 }
 
+id_t elements::cipher_scheme::element_id(const full_name_t & name)
+{
+	return m_name_id.at(name);
+}
+
 element_ptr cipher_scheme::element(const full_name_t& name)
 {
-	return m_elements[ m_name_id.at(name) ];
+	return m_elements.at(m_name_id.at(name));
+}
+
+element_ptr elements::cipher_scheme::element(const id_t & id)
+{
+	return m_elements.at(id);
 }
 
 cipher_scheme & cipher_scheme::assembly()
@@ -79,7 +94,7 @@ cipher_scheme & cipher_scheme::assembly()
 	id_pool_t curr_el_pool = {};
 	id_pool_t next_el_pool = _find_all_ids();
 
-	m_circuit.clear();
+	circuit_t circuit;
 
 	prev_el_pool.insert(m_name_id.at(scheme::names::key));
 	prev_el_pool.insert(m_name_id.at(scheme::names::text));
@@ -87,15 +102,13 @@ cipher_scheme & cipher_scheme::assembly()
 	next_el_pool.erase(m_name_id.at(scheme::names::key));
 	next_el_pool.erase(m_name_id.at(scheme::names::text));
 
-	m_circuit.push_front(std::move(prev_el_pool));
+	circuit.push_front(std::move(prev_el_pool));
 	
-	for (curr_el_pool = _find_next_layer_ids(m_circuit.back(), next_el_pool); 
+	for (curr_el_pool = _find_next_layer_ids(circuit.back(), next_el_pool);
 			curr_el_pool.size();
-		 curr_el_pool = _find_next_layer_ids(m_circuit.back(), next_el_pool)
+		 curr_el_pool = _find_next_layer_ids(circuit.back(), next_el_pool)
 		)
 	{
-		m_name_id;
-		m_elements;
 		if (_intersection(curr_el_pool, prev_el_pool).size() ) {
 			throw exception_t(error_messages::trigger_trying);      //it will be a normal information about the error,\
 														 when I become a normal developer, of course.
@@ -109,9 +122,11 @@ cipher_scheme & cipher_scheme::assembly()
 			prev_el_pool.insert(*cit);  
 		}
 
-		m_circuit.push_back(std::move(curr_el_pool));
+		circuit.push_back(std::move(curr_el_pool));
 		curr_el_pool.clear();		
 	}
+
+	m_circuit = std::move(circuit);
 
 	return *this;
 }
@@ -141,9 +156,9 @@ bitset_t cipher_scheme::run()
 			//std::cout << *m_elements[*pool_cit] << std::endl;
 
 			std::for_each(m_wires.cbegin(), m_wires.cend(), [ & ](wires_t::value_type wire){
-				if (*pool_cit == wire.first.el_id) {
-					m_elements[wire.second.el_id]->input_ref()[wire.second.pin] =
-						m_elements[wire.first.el_id]->output_bit(wire.first.pin);
+				if (*pool_cit == wire.first.id1) {
+					m_elements[wire.first.id2]->input_ref()[wire.second.pin2] =
+						m_elements[wire.first.id1]->output_bit(wire.second.pin1);
 				}
 			});
 		}
@@ -158,12 +173,13 @@ bitset_t cipher_scheme::run()
 
 
 
-cipher_scheme& cipher_scheme::add_connection_fast(const full_name_t& o_elem_name, size_type o_pin, const full_name_t& i_elem_name, size_type i_pin)
+cipher_scheme& cipher_scheme::add_connection_fast(const full_name_t& o_elem_name, pin_t o_pin, const full_name_t& i_elem_name, pin_t i_pin)
 {
 	auto id_out = m_name_id.at(o_elem_name);
 	auto id_in  = m_name_id.at(i_elem_name);
-	m_wires.insert({ pin_t(id_out, o_pin), pin_t( id_in , i_pin) });
-				
+
+	m_wires.insert({ id_pair_t(id_out, id_in), pin_pair_t( o_pin , i_pin) });
+
 	return *this;
 
 }
@@ -196,8 +212,8 @@ cipher_scheme::id_pool_t cipher_scheme::_find_next_layer_ids(id_t id, const id_p
 
 	for (auto cit = m_wires.cbegin(); cit != m_wires.cend(); ++cit)
 	{
-		if (cit->first.el_id == id){
-			answer.insert(cit->second.el_id);
+		if (cit->first.id1 == id){
+			answer.insert(cit->first.id2);
 		}
 	}
 	return answer;
@@ -207,7 +223,7 @@ cipher_scheme::id_pool_t cipher_scheme::_intersection(const id_pool_t& poolA, co
 {
 	id_pool_t answer = {};
 
-	if (poolA.size() <= poolB.size()) {
+	/*if (poolA.size() <= poolB.size()) {
 		
 		for (auto cit = poolA.cbegin(); cit != poolA.cend(); ++cit)
 		{
@@ -226,8 +242,12 @@ cipher_scheme::id_pool_t cipher_scheme::_intersection(const id_pool_t& poolA, co
 			}
 		}
 
-	}
+	}*/
 	
+	std::set_intersection(poolA.begin(), poolA.end(),
+		poolB.begin(), poolB.end(),
+		std::inserter(answer, answer.begin()));
+
 	return answer;
 }
 

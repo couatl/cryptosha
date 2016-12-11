@@ -5,6 +5,7 @@
 #include <set>
 #include <unordered_map>
 #include <map>
+#include <utility>
 #include <iostream>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/bimap.hpp>
@@ -16,16 +17,7 @@
 
 #include "Interpretator/cparse/shunting-yard.h"
 
-namespace cryptosha {
 
-	class scheme;
-
-	class console_reader;
-	class interpretator;
-
-	class analysis;
-	class bitset_pool;
-}
 
 namespace cry {
 
@@ -47,6 +39,7 @@ namespace cry {
 	using   report_t = string_t;
 	using     name_t = string_t;
 	using expression_t = string_t;
+	using expressions = std::list<expression_t>;
 
 	using istream_t = std::istream;
 	using ostream_t = std::ostream;
@@ -55,6 +48,7 @@ namespace cry {
 
 	using exception_t = std::invalid_argument;
 	using bad_any_cast = boost::bad_any_cast;
+
 
 	using  int_t = decltype(calculator::calculate("0").asInt());
 	using vars_t = TokenMap;
@@ -70,15 +64,14 @@ namespace cry {
 		iosize_t() = default;
 		iosize_t(type in_, type out_) : in(in_), out(out_) {};
 	};
-
-	struct graphic_size_t {
+	struct gsize_t {
 		using type = ulong_t;
 
 		type x;
 		type y;
 
-		graphic_size_t() = default;
-		graphic_size_t(type x_, type y_) : x(x_), y(y_) {};
+		gsize_t() = default;
+		gsize_t(type x_, type y_) : x(x_), y(y_) {};
 	};
 
 
@@ -142,10 +135,11 @@ namespace cry {
 
 		class simple_scheme;
 		class cipher_scheme;
+		class graphic_scheme;
 	}
 
 	using element_ptr = std::shared_ptr<elements::basic_element>;
-	using scheme_ptr = std::shared_ptr<cryptosha::scheme>;
+	using scheme_ptr = std::shared_ptr<elements::graphic_scheme>;
 
 	namespace syntax {
 
@@ -209,15 +203,15 @@ namespace cry {
 		}
 
 		namespace regs_str {
-			static const string_t assinging = string_t("\\s*(\\S+)\\s*") + keywords::op_assigning + string_t("\\s*(\\S+)\\s*");
+			static const string_t assinging = string_t("\\s*(.+)\\s*") + keywords::op_assigning + string_t("\\s*(.+)\\s*");
 			static const string_t add = string_t \
-				("\\s*add\\s+(\\w+)\\s+@(\\w+)\\s+(\\d+)\\s*->\\s*(\\d+)\\s+\p(\\(\\s*(\\S+)\\s*\\,\\s*(\\S+)\\s*\\))?\\s*\s(\\(\\s*(\\S+)\\s*\\,\\s*(\\S+)\\s*\\))?\\s*");
+				("\\s*add\\s+(\\w+)\\s+@(.+)\\s+(\\d+)\\s*->\\s*(\\d+)\\s+\p(\\(\\s*(.+)\\s*\\,\\s*(.+)\\s*\\))?\\s*\s(\\(\\s*(.+)\\s*\\,\\s*(.+)\\s*\\))?\\s*");
 			static const string_t del = string_t("\\s*del\\s+@(\\w+)\\s*");
 			static const string_t assembly = string_t("\\s*assembly\\s*");
 			static const string_t run = string_t("\\s*run\\s*");
 			static const string_t script = string_t("\\s*script\\s+(\\w+\\.txt)\\s*");
 			static const string_t connect = string_t("\\s*connect\\s+@(\\w+)\\s+(\\[[\\s*\\d+\\s+]+\\])\\s*@(\\w+)\\s*(\\[[\\s*\\d+\\s+]+\\])\\s*");
-			static const string_t m_for = string_t("\\s*for\\s*\\(\\s*(\\S+)\\s*;\\s*(\\S+)\\s*;\\s*(\\S+)\\s*\\)\\s*");
+			static const string_t m_for = string_t("\\s*for\\s*\\(\\s*(.+)\\s*;\\s*(.+)\\s*;\\s*(.+)\\s*\\)\\s*");
 			static const string_t add_s_p = string_t("\\s*add\\s+(\\w+)\\s+@(\\w+)\\s+(\\d+)\\s*->\\s*(\\d+)\\s+(\\w)(\\[[\\s*\\d+\\s+]+\\])\\s*");
 
 		}
@@ -282,7 +276,6 @@ namespace cry {
 
 		namespace types {
 
-
 			namespace invis {
 
 				struct _script {
@@ -312,11 +305,31 @@ namespace cry {
 
 				struct _add_element {
 
-					using s_vector = int_vector;
-					using p_vector = int_vector;
-					using element = element_keys;
-					using shift_size = size_type;
+					struct scheme_parameters {
 
+						name_t element_name;
+						index_t element_index;
+						gsize_t graphic_size;
+						gsize_t position;
+
+					};
+
+					struct unevaluated_parameters {
+
+						expression_t graphic_width;
+						expression_t graphic_height;
+						expression_t graphic_x;
+						expression_t graphic_y;
+
+					};
+
+					struct types{
+						using s_vector = int_vector;
+						using p_vector = int_vector;
+						using element = element_keys;
+						using shift_size = size_type;
+					};
+					
 					enum class keys {
 						element_key,
 						shift_size,
@@ -324,14 +337,15 @@ namespace cry {
 						s_vector,
 					};
 
-					using ctor_t = std::unordered_map<keys, any_t>;
-
-					expression_t element_name;
+					using s_vector = int_vector;
+					using p_vector = int_vector;
+					using element = element_keys;
+					using shift_size = size_type;
 					
-					name_t name_for_scheme;
-					index_t index_for_scheme;
+					using extra_parameters = std::unordered_map<keys, any_t>;
 
-
+					expression_t element_name_index;
+					
 					element_keys element_key = element_keys::buffer;
 
 					iosize_t  iosize;
@@ -341,7 +355,8 @@ namespace cry {
 					expression_t graphic_x;
 					expression_t graphic_y;
 
-					ctor_t extra_options;
+					extra_parameters  extra_options;
+					scheme_parameters scheme_options;
 
 					_add_element() = default;
 				};
@@ -350,14 +365,13 @@ namespace cry {
 					expression_t element_name;
 
 				};
-
-
+				
 				struct _connect {
 					expression_t sender_name;
 					expression_t receiver_name;
 
-					int_vector pins_of_sender;
-					int_vector pins_of_receiver;
+					expressions pins_of_sender;
+					expressions pins_of_receiver;
 				};
 
 				struct _disconnect {
@@ -430,9 +444,10 @@ namespace cry {
 
 		int_vector get_reverse(const int_vector& vector);
 		bool is_invertible(const int_vector& vector);
-
-
+		
 		bool get_bit(const size_type & value, size_type pos);
+
+		int_t to_int_t(const string_t& str);
 	}
 
 	namespace scheme {
@@ -446,7 +461,22 @@ namespace cry {
 		static const string_t output("out");
 		static const string_t input("in");
 		static const string_t run("run");
-
+		static const string_t pos("pos");
+		static const string_t gsize("gsize");
+		static const string_t x("x");
+		static const string_t y("y");
+		
 	}
 
+}
+
+namespace cryptosha {
+
+	using scheme = cry::elements::graphic_scheme;
+
+	class console_reader;
+	class interpretator;
+
+	class analysis;
+	class bitset_pool;
 }

@@ -24,26 +24,50 @@ using namespace cry;
 
 class elements::cipher_scheme : public elements::basic_element
 {
+	using pin_t = size_type;
 
-	typedef struct _pin_t_ {
-		id_t el_id;
-		size_type   pin;
-		_pin_t_(id_t id, size_type pin_number) : el_id(id), pin(pin_number) {}
+	struct	pin_pair_t {
+		id_t pin1;
+		id_t pin2;
+		pin_pair_t(id_t pin_1, id_t pin_2) : pin1(pin_2), pin2(pin_2) {}
 
 		auto tie() const
 		{
-			return std::tie(el_id, pin);
+			return std::tie(pin1, pin2);
 		}
 
-		friend bool operator< (const _pin_t_& a, const _pin_t_& b)
+		pin_pair_t swap()
 		{
-			return a.tie() < b.tie();
+			std::swap(pin1, pin2);
 		}
 
-	} pin_t;
+		bool operator< (const pin_pair_t& rhs)
+		{
+			return tie() < rhs.tie();
+		}
 
-	using id_pool_t = std::set<id_t>;
+	};
+	struct	id_pair_t {
+		id_t id1;
+		id_t id2;
+		id_pair_t(id_t id_1, id_t id_2) : id1(id_2), id2(id_2) {}
 
+		auto tie() const
+		{
+			return std::tie(id1, id2);
+		}
+
+		id_pair_t swap()
+		{
+			std::swap(id1, id2);
+		}
+
+		bool operator< (const id_pair_t& rhs)
+		{
+			return tie() < rhs.tie();
+		}
+
+	};
 	struct full_name_t {
 
 		name_t  name;
@@ -55,22 +79,29 @@ class elements::cipher_scheme : public elements::basic_element
 		{
 			return std::tie(name, index);
 		}
-		
-		friend bool operator< (const full_name_t& a, const full_name_t& b)
-		{
-			return a.tie() < b.tie();
-		}
+
 	};
 
+	using id_pool_t  = std::set<id_t>;
 	using circuit_t  = std::list<id_pool_t>;
-	using wires_t    = std::multimap<pin_t, pin_t>;
-	using names_id_t = std::map<full_name_t, id_t>;
+	using wires_t    = std::multimap<
+							id_pair_t, /* -> */ pin_pair_t,
+							std::function<bool(const id_pair_t&, const id_pair_t&)>
+						>;
+	using names_id_t = std::map<
+							full_name_t, /* -> */ id_t,
+							std::function<bool(const full_name_t&, const full_name_t&)>
+						>;
 	using elements_t = std::map<id_t, element_ptr>;
 
+	
+
 public:
+	using full_name = full_name_t;
 	using layers = circuit_t;
 	using element_name = full_name_t;
 	using id = id_t;
+	using wires = wires_t;
 	using id_bitset = std::map<id_t, bitset_t>;
 
 public:
@@ -78,14 +109,12 @@ public:
 
 	cipher_scheme(size_type text_size, size_type key_size, size_type out_size);
 
-	cipher_scheme& add_element(const factory_package& element_package);
+	id_t add_element(const factory_package& element_package);
 
 	cipher_scheme& delete_element(const full_name_t& full_name);
 	
-	cipher_scheme& add_connection_fast(const full_name_t& sender_name, size_type pin_out, const full_name_t& receiver_name, size_type pin_in);
+	cipher_scheme& add_connection_fast(const full_name_t& sender_name, pin_t pin_out, const full_name_t& receiver_name, pin_t pin_in);
 	cipher_scheme& delete_connection(const full_name_t& sender_name, size_type pin_out, const full_name_t& receiver_name, size_type pin_in);
-
-
 
 	cipher_scheme& set_key(const string_t&);
 	cipher_scheme& set_key(const int_t&);
@@ -98,14 +127,14 @@ public:
 
 	id_bitset run(id_pool_t& element_pool);
 
-	id_t  get_id(const full_name_t& name);
+	id_t  element_id(const full_name_t& name);
 	element_ptr element(const full_name_t& name);
 	element_ptr element(const id_t& id);
 	
 
 	virtual ~cipher_scheme() = default;
 
-public:
+protected:
 	names_id_t  m_name_id;
 	wires_t     m_wires;
 	circuit_t   m_circuit;
@@ -135,13 +164,6 @@ private methods:
 };
 
 
-
-class ::cryptosha::scheme : public cry::elements::cipher_scheme
-{
-public: 
-	scheme(size_type text_size, size_type key_size, size_type out_size) : cipher_scheme(text_size, key_size, out_size) {} ;
-
-};
 
 #ifdef myKeyWords
 #undef methods

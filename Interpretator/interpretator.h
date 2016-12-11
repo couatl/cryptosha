@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "../xElements/xScheme.h"
+#include "../xElements/graphic_scheme.h"
 #include "reader/Reader.h"
 
 namespace cryptosha {	
@@ -9,6 +9,7 @@ namespace cryptosha {
 
 		static const string_t this_scheme_name{ "this scheme" };
 		static const char     name_divider = '_';
+		static const string_t null_part = "0";
 
 		using  ::cry::scheme_ptr;
 		using  ::cry::element_ptr;
@@ -124,11 +125,12 @@ namespace cryptosha {
 			using operations_t = std::map<code::keyword_t, operation_ptr_t>;
 
 		public:
-			interpretator(std::basic_istream<char, std::char_traits<char>>& in, \
+			interpretator(size_type text_size, size_type key_size, size_type cipher_size, 
+				std::basic_istream<char, std::char_traits<char>>& in, 
 				std::basic_ostream<char, std::char_traits<char>>& out) 
 				 : reader(in, out)
 			{
-				handler.schemes[this_scheme_name] = scheme_ptr(new scheme(8,8,8));
+				handler.schemes[this_scheme_name] = scheme_ptr(new scheme(text_size, key_size, cipher_size));
 				operations[code::keyword_t::add_element] = std::move(operation_ptr_t(new operations::add_element()));
 				operations[code::keyword_t::assinging] = std::move(operation_ptr_t(new operations::assigning()));
 				operations[code::keyword_t::goto_after] = std::move(operation_ptr_t(new operations::goto_after()));

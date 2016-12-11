@@ -115,9 +115,21 @@ auto ns_c_a::calculator::get_names(const string_t& expression) -> nameslist_t
 
 auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& parsed_name)->int_t
 {
-	auto it = parsed_name.begin();
+	auto it = parsed_name.cbegin();
 	auto element_ptr = scheme->element({ it->first, std::stoul(it->second) });
 	++it;
+
+
+	if (it->first == ::cry::scheme::run) {
+		return element_ptr->set_input(std::stoull(it->second)).run().to_ulong();
+	}
+	
+	string_t func_part = "";
+	for (; it != parsed_name.cend(); ++it)
+	{
+		func_part += it->first + name_divider + it->second;
+	}
+
 
 	if (it->first == cry::scheme::output && it->second == "0") {
 		return element_ptr->output().to_ulong();
@@ -127,7 +139,7 @@ auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& pars
 			return element_ptr->set_input(std::stoull(it->second)).run().to_ulong();
 		}
 		else {
-			throw unknown_value("unknown_value : "+ it->first);
+			throw unknown_value("unknown_value : " + it->first);
 		}
 	
 
@@ -390,20 +402,22 @@ report_t ns_c_a::operations::add_element::doit(handler_t& handler)
 
 	auto option = any_cast<code::types::add_element>(handler.cursor->command);
 
-	auto name = calculator::calculate_left(option.element_name, handler.variables, scheme_ptr);
+	auto name = calculator::calculate_left(option.element_name_index, handler.variables, scheme_ptr);
 
 	if (name.parsed.size() != 1) {
 		return report_t("invalid name : " + name.name);
 	}
 
-	/*auto current_str_name = handler.cursor->command.at(code::keys::element_name);
 
-	handler.cursor->command[code::keys::element_name] = name.parsed.front().first;
-	handler.cursor->command[code::keys::name_index  ] = size_type(std::stoull(name.parsed.front().second));*/
+	option.scheme_options.element_name  = name.parsed.front().first;
+	option.scheme_options.element_index = foo::to_int_t(name.parsed.front().second);
 
+	option.scheme_options.graphic_size.x = calculator::calculate(option.graphic_width , handler.variables, scheme_ptr);
+	option.scheme_options.graphic_size.y = calculator::calculate(option.graphic_height, handler.variables, scheme_ptr);
+	option.scheme_options.position.x = calculator::calculate(option.graphic_x, handler.variables, scheme_ptr);
+	option.scheme_options.position.y = calculator::calculate(option.graphic_y, handler.variables, scheme_ptr);
+	
 	scheme_ptr->add_element(option);
-
-	//handler.cursor->command[code::keys::element_name] = current_str_name;
 
 	return report_t("element is added successfully");
 }
@@ -446,11 +460,34 @@ report_t ns_c_a::operations::connect::doit(handler_t& handler)
 {
 	auto& option = any_cast<code::types::connect>(handler.cursor->command);
 
-	if (option.pins_of_receiver != option.pins_of_sender) {
+	if (option.pins_of_receiver.size() != option.pins_of_sender.size()) {
 		return report_t("wrong parameters : size(pins_in) != size(pins_out)");
 	}
 
-	
+	auto name_of_scheme = this_scheme_name;
+	auto scheme_ptr = handler.schemes.at(name_of_scheme);
+
+	auto name_sender = calculator::calculate_left(option.sender_name, handler.variables, scheme_ptr);
+	if (name_sender.parsed.size() != 1) {
+		return report_t("invalid name : " + name_sender.name);
+	}
+
+	auto name_receiver = calculator::calculate_left(option.receiver_name, handler.variables, scheme_ptr);
+	if (name_receiver.parsed.size() != 1) {
+		return report_t("invalid name : " + name_receiver.name);
+	}
+
+	elements::cipher_scheme::full_name sender_full_name = { name_sender.parsed.front().first, foo::to_int_t(name_sender.parsed.front().second) };
+	elements::cipher_scheme::full_name receiver_full_name = { name_receiver.parsed.front().first, foo::to_int_t(name_receiver.parsed.front().second) };
+
+
+	/*auto count = option.pins_of_receiver.size();	
+	for (auto i = 0; i < count; ++i)
+	{
+		scheme_ptr->add_connection_fast(sender_full_name,   option.pins_of_sender[i],
+										receiver_full_name, option.pins_of_receiver[i]);
+
+	}*/
 
 	return report_t("wires is added successfully");
 }

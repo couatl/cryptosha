@@ -2,115 +2,10 @@
 
 
 
+namespace ancillary_funcs {
 
+	using namespace cry;
 
-namespace funcs
-{
-
-	code::types::assigning assinging(string_t str)
-	{
-		code::types::assigning cmd;
-		std::smatch res;
-		std::regex_search(str, res, syntax::regs::assinging);
-		cmd.left_part = cryptosha::space_free(res[1].str());
-		cmd.expression = cryptosha::space_free(res[2].str());		
-		return cmd;
-	}
-
-	code::types::delete_element del(string_t str)
-	{
-		code::types::delete_element cmd;
-		std::smatch res;
-		std::regex_search(str, res, syntax::regs::del);
-		cmd.element_name = res[1].str();
-		return cmd;
-	}
-
-	code::types::connect connect(string_t str)
-	{
-		code::types::connect cmd;
-		std::smatch res;
-		std::regex_search(str, res, syntax::regs::connect);
-		cmd.sender_name = res[1].str();
-		cmd.pins_of_sender = cryptosha::str_to_int_vec(res[2].str());
-		cmd.receiver_name = res[3].str();
-		cmd.pins_of_receiver = cryptosha::str_to_int_vec(res[4].str());
-		
-	
-		return cmd;
-	}
-
-	code::types::script script(string_t str)
-	{
-		code::types::script cmd;
-		std::smatch res;
-		std::regex_search(str, res, syntax::regs::script);
-		cmd.ofstream = res[1].str();
-	
-		return cmd;
-	}
-	code::types::add_element add(string_t str)
-	{
-		code::types::add_element cmd;
-		std::smatch res;
-		std::regex_search(str, res, syntax::regs::add);
-		cmd.element_name = res[2].str();
-		cmd.element_key = code::name_to_element_key.at(res[1].str());
-		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
-		if (res[5].str().size())
-		{
-			cmd.graphic_x = res[6].str();
-			cmd.graphic_y = res[7].str();
-		}
-		else
-		{
-			cmd.graphic_x = string_t("");
-			cmd.graphic_y = string_t("");
-		}
-		if (res[7].str().size())
-		{
-			cmd.graphic_width = res[9].str();
-			cmd.graphic_height = res[10].str();
-		}
-		else
-		{
-			cmd.graphic_width = string_t("");
-			cmd.graphic_height = string_t("");
-		}
-	
-
-		return cmd;
-	}
-
-	code::types::add_element add_s_p(string_t str)
-	{
-		code::types::add_element cmd;
-		std::smatch res;
-		std::regex_search(str, res, syntax::regs::add_s_p);
-		cmd.element_name = res[2].str();
-		cmd.element_key = code::name_to_element_key.at(res[1].str());
-		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
-		cmd.extra_options.insert({ code::types::add_element::keys::p_vector, cryptosha::str_to_int_vec(res[6].str(), res[5].str()) });
-		/*cmd.insert({ code::keys::element, code::name_to_element_type.at(res[1].str()) });
-		cmd.insert({ code::keys::name, res[2].str() });
-		cmd.insert({ code::keys::iosize, iosize_t(stoi(res[3].str()), stoi(res[4].str())) });
-		cmd.insert({ code::keys::int_vector, cryptosha::str_to_int_vec(res[6].str(), res[5].str()) });*/
-		return cmd;
-	}
-}
-
-
-namespace output
-{
-	string_t err_str("incorrect input");
-	string_t begin_str(">>>> ");
-	string_t tab_str("   ");
-	string_t begin_tab_str("     ");
-}
-
-
-namespace cryptosha
-{
 	int sys_transfer(string_t str, string_t mod)
 	{
 		int numb = 0;
@@ -171,6 +66,176 @@ namespace cryptosha
 		return buf;
 	}
 
+	string_t space_free(string_t input_str)
+	{
+		for (auto it = input_str.begin(); it != input_str.end();)
+		{
+			if (*it == ' ')
+			{
+				input_str.erase(it);
+			}
+			else
+				++it;
+		}
+		return input_str;
+	}
+
+	expressions simple_str_to_list(string_t input_str, const string_t divider1)
+	{
+		expressions vec;
+		size_t prev = 0;
+		size_t next;
+		size_t delta = divider1.length();
+
+		while ((next = input_str.find(divider1, prev)) != string_t::npos)
+		{
+			string_t tmp = input_str.substr(prev, next - prev);
+			if (input_str.substr(prev, next - prev).size())
+				vec.push_back(input_str.substr(prev, next - prev));
+			vec.push_back(divider1);
+			prev = next + delta;
+		}
+		cry::string_t tmp = input_str.substr(prev);
+		vec.push_back(input_str.substr(prev));
+		return vec;
+	}
+
+	expressions simple_str_to_list1(string_t input_str, const string_t divider1)
+	{
+		cry::expressions vec;
+		size_t prev = 0;
+		size_t next;
+		size_t delta = divider1.length();
+
+		while ((next = input_str.find(divider1, prev)) != string_t::npos)
+		{
+			string_t tmp = input_str.substr(prev, next - prev);
+			if (input_str.substr(prev, next - prev).size())
+				vec.push_back(input_str.substr(prev, next - prev));
+			prev = next + delta;
+		}
+		string_t tmp = input_str.substr(prev);
+		vec.push_back(input_str.substr(prev));
+		return vec;
+	}
+}
+
+namespace funcs
+{
+
+	code::types::assigning assinging(string_t str)
+	{
+		code::types::assigning cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::assinging);
+		cmd.left_part = ancillary_funcs::space_free(res[1].str());
+		cmd.expression = ancillary_funcs::space_free(res[2].str());
+		return cmd;
+	}
+
+	code::types::delete_element del(string_t str)
+	{
+		code::types::delete_element cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::del);
+		cmd.element_name = res[1].str();
+		return cmd;
+	}
+
+	code::types::connect connect(string_t str)
+	{
+		code::types::connect cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::connect);
+		cmd.sender_name = res[1].str();
+		cmd.pins_of_sender = ancillary_funcs::simple_str_to_list1(res[2].str(), ",");
+		cmd.receiver_name = res[3].str();
+		cmd.pins_of_receiver = ancillary_funcs::simple_str_to_list1(res[4].str(), ",");
+		return cmd;
+	}
+
+	code::types::script script(string_t str)
+	{
+		code::types::script cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::script);
+		cmd.ofstream = res[1].str();
+
+		return cmd;
+	}
+	code::types::add_element add(string_t str)
+	{
+		code::types::add_element cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::add);
+		cmd.element_name_index = res[2].str();
+		cmd.element_key = code::name_to_element_key.at(res[1].str());
+		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
+		if (res[5].str().size())
+		{
+			cmd.graphic_x = res[6].str();
+			cmd.graphic_y = res[7].str();
+		}
+		else
+		{
+			cmd.graphic_x = string_t("");
+			cmd.graphic_y = string_t("");
+		}
+		if (res[7].str().size())
+		{
+			cmd.graphic_width = res[9].str();
+			cmd.graphic_height = res[10].str();
+		}
+		else
+		{
+			cmd.graphic_width = string_t("");
+			cmd.graphic_height = string_t("");
+		}
+
+
+		return cmd;
+	}
+
+	code::types::add_element add_s_p(string_t str)
+	{
+		code::types::add_element cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::add_s_p);
+		cmd.element_name_index = res[2].str();
+		cmd.element_key = code::name_to_element_key.at(res[1].str());
+		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
+		
+		switch (cmd.element_key)
+		{
+		case element_keys::simple_sbox :
+			cmd.extra_options.insert({ code::types::add_element::keys::s_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+			break;
+		case element_keys::p_block :
+			cmd.extra_options.insert({ code::types::add_element::keys::p_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+			break;
+		default:
+			throw exception_t("unknown element, but it looks like p-block or simple sbox");
+			break;
+		}
+
+		return cmd;
+	}
+}
+
+
+namespace output
+{
+	string_t err_str("incorrect input");
+	string_t begin_str(">>>> ");
+	string_t tab_str("   ");
+	string_t begin_tab_str("     ");
+}
+
+
+
+namespace cryptosha
+{
+
 
 	void console_reader::stack_close()
 	{
@@ -186,44 +251,8 @@ namespace cryptosha
 		{
 			code = code_st_el;
 		}
-		else 
+		else
 			ns_stack.top().simple_command_list.insert(ns_stack.top().it, code_st_el.begin(), code_st_el.end());
-	}
-
-
-	string_t space_free(string_t input_str)
-	{
-		for (auto it = input_str.begin(); it != input_str.end();)
-		{
-			if (*it == ' ')
-			{
-				input_str.erase(it);
-			}
-			else 
-				++it;
-		}
-		return input_str;
-	}
-
-
-	std::list<string_t> simple_str_to_vec(string_t input_str, const string_t divider1)
-	{
-		std::list<string_t> vec;
-		size_t prev = 0;
-		size_t next;
-		size_t delta = divider1.length();
-
-		while ((next = input_str.find(divider1, prev)) != string_t::npos)
-		{
-			string_t tmp = input_str.substr(prev, next - prev);
-			if (input_str.substr(prev, next - prev).size())
-				vec.push_back(input_str.substr(prev, next - prev));
-			vec.push_back(divider1);
-			prev = next + delta;
-		}
-		string_t tmp = input_str.substr(prev);
-		vec.push_back(input_str.substr(prev));
-		return vec;
 	}
 
 
@@ -231,15 +260,15 @@ namespace cryptosha
 	{
 		std::list<string_t> list_of_strs;
 		std::list<string_t> vec;
-		
-		list_of_strs = simple_str_to_vec(input_str, divider1);
-		
+
+		list_of_strs = ancillary_funcs::simple_str_to_list(input_str, divider1);
+
 		auto last = list_of_strs.begin();
 		auto first = last++;
 
 		while (first != list_of_strs.end())
 		{
-			vec = simple_str_to_vec(*first, divider2);
+			vec = ancillary_funcs::simple_str_to_list(*first, divider2);
 			list_of_strs.insert(last, vec.begin(), vec.end());
 			list_of_strs.erase(first);
 			first = last;
@@ -256,11 +285,11 @@ namespace cryptosha
 		string_t result = string_t("");
 		string_t str;
 		std::list<string_t> list;
-		do{
+		do {
 			getline(input.get(), str);
 			list = str_to_list(str, syntax::keywords::c_open, syntax::keywords::c_close);
 			str.clear();
-		
+
 			for (auto &it : list)
 			{
 				if (it == syntax::keywords::c_open_m)
@@ -294,7 +323,7 @@ namespace cryptosha
 	code::simple_command console_reader::simple_cmd_handle(string_t input_str, string_t condition = "")
 	{
 		std::smatch res;
-	
+
 		code::simple_command code_element;
 
 		if (std::regex_match(input_str, syntax::regs::assinging))
@@ -318,46 +347,50 @@ namespace cryptosha
 		}
 		else if (std::regex_match(input_str, syntax::regs::del))
 		{
-			
+			code_element.keyword = code::keyword_t::delete_element;
 			code_element.command = funcs::del(input_str);
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
 		}
 		else if (std::regex_match(input_str, syntax::regs::connect))
 		{
-		
+			code_element.keyword = code::keyword_t::connect;
 			code_element.command = funcs::connect(input_str);
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
 		}
 		else if (std::regex_match(input_str, syntax::regs::add))
 		{
+			code_element.keyword = code::keyword_t::add_element;
 			code_element.command = funcs::add(input_str);
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
 		}
 		else if (std::regex_match(input_str, syntax::regs::add_s_p))
 		{
+			code_element.keyword = code::keyword_t::add_element;
 			code_element.command = funcs::add_s_p(input_str);
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
 		}
 		else if (std::regex_match(input_str, syntax::regs::script))
 		{
+			code_element.keyword = code::keyword_t::script;
 			code_element.command = funcs::script(input_str);
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
 		}
-		
-		
+
+
 		return code_element;
 	}
 
 
-	void console_reader::str_to_cmd(string_t input_str)
+	void console_reader::cmd_make(string_t input_str)
 	{
 		if (!input_str.size())
 			return;
+
 		std::smatch res;
 		code::simple_command code_element;
 		stack_elem st_el;
@@ -373,13 +406,14 @@ namespace cryptosha
 
 			code_element.mark = mark_number++;
 			code_element.condition = res[2].str();
+			code_element.keyword = code::keyword_t::goto_after;
 			code_element.command = code::types::goto_after{ mark_number };
 			ns_stack.top().simple_command_list.push_back(code_element);
 
-
 			code_element.mark = mark_number++;
 			code_element.condition = "";
-			code_element.command = code::types::goto_after{ mark_number + 1};
+			code_element.keyword = code::keyword_t::goto_after;
+			code_element.command = code::types::goto_after{ mark_number + 1 };
 			ns_stack.top().simple_command_list.push_back(code_element);
 
 
@@ -389,6 +423,7 @@ namespace cryptosha
 
 			code_element.mark = mark_number++;
 			code_element.condition = "";
+			code_element.keyword = code::keyword_t::goto_after;
 			code_element.command = code::types::goto_after{ mark_number - 5 };
 			ns_stack.top().simple_command_list.push_back(code_element);
 
@@ -412,19 +447,19 @@ namespace cryptosha
 				stack_close();
 			else
 			{
-				output.get() << output::err_str  << std::endl;
+				output.get() << output::err_str << std::endl;
 				return;
 			}
 			if (!ns_stack.empty())
 			{
 				if (ns_stack.top().keyword == stack_kw::m_for)
 					stack_close();
-			}	
+			}
 			return;
 		}
-		
-		
-		
+
+
+
 		code_element = simple_cmd_handle(input_str);
 		if (code_element.command.empty())
 		{
@@ -445,17 +480,17 @@ namespace cryptosha
 		{
 			ns_stack.top().simple_command_list.insert(ns_stack.top().it, code_element);
 		}
-		
-		
-	}
-	
 
-	void console_reader::list_handle(std::list<string_t> list_of_strs)
+
+	}
+
+
+	void console_reader::list_handle(const expressions& list_of_strs)
 	{
-		
-		for (auto it : list_of_strs) 
+
+		for (auto it : list_of_strs)
 		{
-			str_to_cmd(it);
+			cmd_make(it);
 		}
 	}
 
@@ -470,13 +505,13 @@ namespace cryptosha
 			for (size_type i = 0; i < num; ++i)
 				output.get() << output::tab_str;
 			string_t str = input_handle();
-			
+
 			list_handle(str_to_list(str));
-			
 
-		} 
 
-		code::code_type result =  code;
+		}
+
+		code::code_type result = code;
 		code.clear();
 		mark_number = 0;
 		return result;
@@ -499,6 +534,6 @@ namespace cryptosha
 	{
 		return output.get();
 	}
-	
+
 
 }

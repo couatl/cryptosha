@@ -46,7 +46,7 @@ namespace cryptosha
 	private:
 		std::list<string_t> str_to_list(string_t, const string_t, const string_t);
 
-		void str_to_cmd(string_t);
+		void cmd_make(string_t);
 
 		void stack_close();
 
@@ -54,7 +54,7 @@ namespace cryptosha
 
 		string_t input_handle();
 
-		void list_handle(std::list<string_t>);
+		void list_handle(const expressions&);
 
 		size_type num = 0;
 
