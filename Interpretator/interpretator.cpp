@@ -116,7 +116,8 @@ auto ns_c_a::calculator::get_names(const string_t& expression) -> nameslist_t
 auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& parsed_name)->int_t
 {
 	auto it = parsed_name.cbegin();
-	auto element_ptr = scheme->element({ it->first, std::stoul(it->second) });
+	auto fname = elements::graphic_scheme::full_name(it->first, std::stoul(it->second));
+	auto element_ptr = scheme->element(fname);
 	++it;
 
 
@@ -127,21 +128,34 @@ auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& pars
 	string_t func_part = "";
 	for (; it != parsed_name.cend(); ++it)
 	{
-		func_part += it->first + name_divider + it->second;
+		func_part += it->first + ((it->second == null_part) ? ("") : (it->second));
 	}
 
 
-	if (it->first == cry::scheme::output && it->second == "0") {
+	if (func_part == cry::scheme::output + null_part) {
 		return element_ptr->output().to_ulong();
 	}
-	else 
-		if (it->first == ::cry::scheme::run) {
-			return element_ptr->set_input(std::stoull(it->second)).run().to_ulong();
-		}
-		else {
-			throw unknown_value("unknown_value : " + it->first);
-		}
+	if (func_part == cry::scheme::input + null_part) {
+		return element_ptr->input().to_ulong();
+	}
 	
+	auto id = scheme->element_id(fname);
+	auto graphic_info = scheme->graphic_information(id);
+
+	if (func_part == cry::scheme::gsize + cry::scheme::x) {
+		return graphic_info.size.x;
+	}
+	if (func_part == cry::scheme::gsize + cry::scheme::y) {
+		return graphic_info.size.y;
+	}
+	if (func_part == cry::scheme::pos + cry::scheme::x) {
+		return graphic_info.position.x;
+	}
+	if (func_part == cry::scheme::pos + cry::scheme::y) {
+		return graphic_info.position.y;
+	}
+
+	throw unknown_value("unknown_value : " + (--it)->first + " " +  (it)->second + " " +func_part);
 
 
 	return int_t(0);
@@ -379,7 +393,7 @@ auto ns_c_a::calculator::set_left(const name_type& name, vars_t& vars, scheme_pt
 			std::stoul(it->second) });
 		++it;
 
-		if (it->first == ::cry::scheme::input && it->second == "0") {
+		if (it->first == ::cry::scheme::input && it->second == null_part) {
 			element_ptr->set_input(value);
 			return value;
 		}
@@ -400,7 +414,7 @@ report_t ns_c_a::operations::add_element::doit(handler_t& handler)
 
 	auto scheme_ptr = handler.schemes.at(name_of_scheme);
 
-	auto option = any_cast<code::types::add_element>(handler.cursor->command);
+	auto& option = any_cast<code::types::add_element>(handler.cursor->command);
 
 	auto name = calculator::calculate_left(option.element_name_index, handler.variables, scheme_ptr);
 
@@ -480,14 +494,21 @@ report_t ns_c_a::operations::connect::doit(handler_t& handler)
 	elements::cipher_scheme::full_name sender_full_name = { name_sender.parsed.front().first, foo::to_int_t(name_sender.parsed.front().second) };
 	elements::cipher_scheme::full_name receiver_full_name = { name_receiver.parsed.front().first, foo::to_int_t(name_receiver.parsed.front().second) };
 
-
-	/*auto count = option.pins_of_receiver.size();	
-	for (auto i = 0; i < count; ++i)
 	{
-		scheme_ptr->add_connection_fast(sender_full_name,   option.pins_of_sender[i],
-										receiver_full_name, option.pins_of_receiver[i]);
+		auto s_end = option.pins_of_sender.cend();
+		auto s_it = option.pins_of_sender.cbegin();
+		auto r_it = option.pins_of_receiver.cbegin();
 
-	}*/
+		for (; s_it != s_end; ++s_it, ++r_it)
+		{
+			using pin_t = decltype(scheme_ptr)::element_type::pin;
+
+			pin_t pin_of_sender = calculator::calculate(*s_it, handler.variables, scheme_ptr);
+			pin_t pins_of_receiver = calculator::calculate(*r_it, handler.variables, scheme_ptr);
+
+			scheme_ptr->add_connection_fast(sender_full_name, pin_of_sender, receiver_full_name, pins_of_receiver);
+		}
+	}
 
 	return report_t("wires is added successfully");
 }

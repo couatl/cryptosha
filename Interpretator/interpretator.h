@@ -134,6 +134,7 @@ namespace cryptosha {
 				operations[code::keyword_t::add_element] = std::move(operation_ptr_t(new operations::add_element()));
 				operations[code::keyword_t::assinging] = std::move(operation_ptr_t(new operations::assigning()));
 				operations[code::keyword_t::goto_after] = std::move(operation_ptr_t(new operations::goto_after()));
+				operations[code::keyword_t::connect] = std::move(operation_ptr_t(new operations::connect()));
 			}
 
 			interpretator& update_code(code::code_type&& new_code)

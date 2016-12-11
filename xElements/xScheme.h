@@ -27,9 +27,10 @@ class elements::cipher_scheme : public elements::basic_element
 	using pin_t = size_type;
 
 	struct	pin_pair_t {
-		id_t pin1;
-		id_t pin2;
-		pin_pair_t(id_t pin_1, id_t pin_2) : pin1(pin_2), pin2(pin_2) {}
+		pin_t pin1;
+		pin_t pin2;
+
+		pin_pair_t(pin_t pin_1, pin_t pin_2) : pin1(pin_1), pin2(pin_2) {}
 
 		auto tie() const
 		{
@@ -40,17 +41,11 @@ class elements::cipher_scheme : public elements::basic_element
 		{
 			std::swap(pin1, pin2);
 		}
-
-		bool operator< (const pin_pair_t& rhs)
-		{
-			return tie() < rhs.tie();
-		}
-
 	};
 	struct	id_pair_t {
 		id_t id1;
 		id_t id2;
-		id_pair_t(id_t id_1, id_t id_2) : id1(id_2), id2(id_2) {}
+		id_pair_t(id_t id_1, id_t id_2) : id1(id_1), id2(id_2) {}
 
 		auto tie() const
 		{
@@ -101,6 +96,7 @@ public:
 	using layers = circuit_t;
 	using element_name = full_name_t;
 	using id = id_t;
+	using pin = pin_t;
 	using wires = wires_t;
 	using id_bitset = std::map<id_t, bitset_t>;
 
