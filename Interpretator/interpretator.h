@@ -78,7 +78,6 @@ namespace cryptosha {
 			cursor_type         cursor;
 			schemes_t          schemes;
 			vars_t           variables;
-			//ax::calculator  calculator;
 
 		};
 

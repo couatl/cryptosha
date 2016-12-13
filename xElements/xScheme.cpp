@@ -49,8 +49,6 @@ id_t cipher_scheme::add_element(const factory_package& element_package)
 	m_name_id[full_name] = current_id;
 
 	m_elements[current_id] = std::move(get_element(element_package));
-			
-	++m_el_count;
 
 	return current_id;
 }
@@ -60,10 +58,14 @@ id_t cipher_scheme::get_id()
 	return g_next_id++;
 }
 
-cipher_scheme & cipher_scheme::set_key(const string_t& key_vector)
+cipher_scheme& cipher_scheme::set_key(const string_t& key_vector)
 {
 	m_elements[ m_name_id.at(full_name_t(scheme::names::key)) ]->set_input(key_vector);
-
+	return *this;
+}
+cipher_scheme& cipher_scheme::set_key(const int_t& key_value)
+{
+	m_elements[m_name_id.at(full_name_t(scheme::names::key))]->set_input(key_value);
 	return *this;
 }
 
@@ -72,8 +74,14 @@ cipher_scheme& cipher_scheme::set_text(const string_t& text_vector)
 	m_elements[ m_name_id.at(full_name_t(scheme::names::text)) ]->set_input(text_vector);
 	return *this;
 }
+cipher_scheme& cipher_scheme::set_text(const int_t & text_value)
+{
+	m_elements[m_name_id.at(full_name_t(scheme::names::text))]->set_input(text_value);
+	return *this;
+}
 
-id_t elements::cipher_scheme::element_id(const full_name_t & name)
+
+id_t cipher_scheme::element_id(const full_name_t & name)
 {
 	return m_name_id.at(name);
 }
@@ -82,13 +90,42 @@ element_ptr cipher_scheme::element(const full_name_t& name)
 {
 	return m_elements.at(m_name_id.at(name));
 }
-
-element_ptr elements::cipher_scheme::element(const id_t & id)
+element_ptr cipher_scheme::element(const id_t& id)
 {
 	return m_elements.at(id);
 }
 
-cipher_scheme & cipher_scheme::assembly()
+const cipher_scheme::wires_t&   cipher_scheme::wires()
+{
+	return m_wires;
+}
+const cipher_scheme::circuit_t& cipher_scheme::circuit()
+{
+	return m_circuit;
+}
+
+cipher_scheme& cipher_scheme::get_wires_to(wires_t & wires)
+{
+	wires = std::move(m_wires);
+	return *this;
+}
+cipher_scheme& cipher_scheme::get_circuit_to(circuit_t & circuit)
+{
+	circuit = std::move(m_circuit);
+	return *this;
+}
+
+cipher_scheme& cipher_scheme::get_wires_from(wires_t&& wires)
+{
+	m_wires = std::move(wires);
+}
+cipher_scheme& cipher_scheme::get_circuit_from(circuit_t&& circuit)
+{
+	m_circuit = std::move(circuit);
+}
+
+
+cipher_scheme& cipher_scheme::assembly()
 {
 	id_pool_t prev_el_pool = {};
 	id_pool_t curr_el_pool = {};
@@ -131,7 +168,6 @@ cipher_scheme & cipher_scheme::assembly()
 	return *this;
 }
 
-
 bitset_t cipher_scheme::run()
 {
 	auto text_buffer_id = m_name_id.at(scheme::names::text);
@@ -153,12 +189,11 @@ bitset_t cipher_scheme::run()
 		{
 			m_elements[*pool_cit]->run();
 
-			//std::cout << *m_elements[*pool_cit] << std::endl;
 
-			std::for_each(m_wires.cbegin(), m_wires.cend(), [ & ](wires_t::value_type wire){
+			std::for_each(m_wires.cbegin(), m_wires.cend(), [&pool_cit, this](wires_t::value_type wire){
 				if (*pool_cit == wire.first.id1) {
 					m_elements[wire.first.id2]->input_ref()[wire.second.pin2] =
-						m_elements[wire.first.id1]->output_bit(wire.second.pin1);
+						m_elements[wire.first.id1]->output_ref()[wire.second.pin1];
 				}
 			});
 		}
@@ -167,6 +202,16 @@ bitset_t cipher_scheme::run()
 	m_output = m_elements[m_name_id.at(full_name_t(scheme::names::cipher))]->run();
 
 	return m_output;
+}
+
+cipher_scheme::id_bitset cipher_scheme::run(const id_pool_t& element_pool)
+{
+	id_bitset id_to_bitset;
+	for each (auto id in element_pool)
+	{
+		id_to_bitset.insert({ id, element(id)->run() });
+	}
+	return id_to_bitset;
 }
 
 
@@ -194,7 +239,8 @@ cipher_scheme::id_pool_t cipher_scheme::_find_all_ids() const
 	return pool;
 }
 
-cipher_scheme::id_pool_t cipher_scheme::_find_next_layer_ids(const id_pool_t& prev_pool, const id_pool_t& next_pool) const
+cipher_scheme::id_pool_t cipher_scheme::_find_next_layer_ids(const id_pool_t& prev_pool,
+															 const id_pool_t& next_pool) const
 {
 	id_pool_t answer = {};
 
@@ -245,20 +291,21 @@ cipher_scheme::id_pool_t cipher_scheme::_intersection(const id_pool_t& poolA, co
 	}*/
 	
 	std::set_intersection(poolA.begin(), poolA.end(),
-		poolB.begin(), poolB.end(),
-		std::inserter(answer, answer.begin()));
+					      poolB.begin(), poolB.end(),
+		        std::inserter(answer, answer.begin()) 
+	);
 
 	return answer;
 }
 
 cipher_scheme::id_pool_t cipher_scheme::_remove_dependent_el_id_from_pool(id_pool_t& pool)
 {
-	id_pool_t poolNext = _find_next_layer_ids(pool, pool);
+	id_pool_t pool_next = _find_next_layer_ids(pool, pool);
 
-	for (auto cit = poolNext.cbegin(); cit != poolNext.cend(); ++cit)
+	for (auto cit = pool_next.cbegin(); cit != pool_next.cend(); ++cit)
 	{
 		pool.erase(*cit);
 	}
-	return poolNext;
+	return pool_next;
 }
 

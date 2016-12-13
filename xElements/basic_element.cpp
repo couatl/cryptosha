@@ -75,10 +75,21 @@ bitset_t& basic_element::input_ref()
 	return m_input;
 }
 
-bool basic_element::output_bit(size_type bit_index)
+bitset_t& elements::basic_element::output_ref()
 {
-	return m_output[bit_index];
+	return m_output;
 }
+
+bool elements::basic_element::input(size_type bit)
+{
+	return m_input[bit];
+}
+
+bool elements::basic_element::output(size_type bit)
+{
+	return m_output[bit];
+}
+
 
 iosize_t basic_element::size() const
 {

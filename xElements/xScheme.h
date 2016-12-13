@@ -24,6 +24,7 @@ using namespace cry;
 
 class elements::cipher_scheme : public elements::basic_element
 {
+public:
 	using pin_t = size_type;
 
 	struct	pin_pair_t {
@@ -79,25 +80,23 @@ class elements::cipher_scheme : public elements::basic_element
 
 	using id_pool_t  = std::set<id_t>;
 	using circuit_t  = std::list<id_pool_t>;
-	using wires_t    = std::multimap<
-							id_pair_t, /* -> */ pin_pair_t,
+	using wires_t    = std::multimap< 
+							id_pair_t,
+							pin_pair_t,
 							std::function<bool(const id_pair_t&, const id_pair_t&)>
 						>;
-	using names_id_t = std::map<
-							full_name_t, /* -> */ id_t,
+	
+protected:
+	using names_id_t = std::map< 
+							full_name_t,
+							id_t,
 							std::function<bool(const full_name_t&, const full_name_t&)>
 						>;
-	using elements_t = std::map<id_t, element_ptr>;
 
+	using elements_t = std::map<id_t, element_ptr>;
 	
 
 public:
-	using full_name = full_name_t;
-	using layers = circuit_t;
-	using element_name = full_name_t;
-	using id = id_t;
-	using pin = pin_t;
-	using wires = wires_t;
 	using id_bitset = std::map<id_t, bitset_t>;
 
 public:
@@ -109,23 +108,34 @@ public:
 
 	cipher_scheme& delete_element(const full_name_t& full_name);
 	
-	cipher_scheme& add_connection_fast(const full_name_t& sender_name, pin_t pin_out, const full_name_t& receiver_name, pin_t pin_in);
-	cipher_scheme& delete_connection(const full_name_t& sender_name, size_type pin_out, const full_name_t& receiver_name, size_type pin_in);
+	cipher_scheme& add_connection_fast(const full_name_t& sender_name, pin_t pin_out, \
+		const full_name_t& receiver_name, pin_t pin_in);
+	cipher_scheme& delete_connection(const full_name_t& sender_name, size_type pin_out, \
+		const full_name_t& receiver_name, size_type pin_in);
 
-	cipher_scheme& set_key(const string_t&);
-	cipher_scheme& set_key(const int_t&);
-	cipher_scheme& set_text(const string_t&);
-	cipher_scheme& set_text(const int_t&);
-
-	cipher_scheme& assembly();
+	cipher_scheme& set_key(const string_t& key_vector);
+	cipher_scheme& set_key(const int_t& key_value);
+	cipher_scheme& set_text(const string_t& text_vector);
+	cipher_scheme& set_text(const int_t& text_value);
 	
-	bitset_t run() override;
-
-	id_bitset run(id_pool_t& element_pool);
-
 	id_t  element_id(const full_name_t& name);
 	element_ptr element(const full_name_t& name);
 	element_ptr element(const id_t& id);
+	const wires_t&   wires();
+	const circuit_t& circuit();
+
+	cipher_scheme& get_wires_to(wires_t& wires);
+	cipher_scheme& get_circuit_to(circuit_t& circuit);
+
+	cipher_scheme& get_wires_from(wires_t&& wires);
+	cipher_scheme& get_circuit_from(circuit_t&& circuit);
+
+	cipher_scheme& assembly();
+	
+	virtual bitset_t run() override;
+
+	id_bitset run(const id_pool_t& element_pool);
+
 	
 
 	virtual ~cipher_scheme() = default;
@@ -135,8 +145,6 @@ protected:
 	wires_t     m_wires;
 	circuit_t   m_circuit;
 	elements_t  m_elements;
-
-	size_type   m_el_count;
 
 	bitset_t    m_key;
 	bitset_t    m_text;

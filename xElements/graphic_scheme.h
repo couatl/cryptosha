@@ -23,7 +23,7 @@ class elements::graphic_scheme : public elements::cipher_scheme
 			: element_key(element__key), position(pos), size(graphic_size) {};
 	};
 
-	using id_graphic = std::map<cipher_scheme::id, g_info>;
+	using id_graphic = std::map<id_t, g_info>;
 
 public:
 	struct graphic_info : public g_info
@@ -36,18 +36,18 @@ public:
 
 public:
 
-	graphic_scheme(size_type text_size, size_type key_size, size_type cipher_size) 
-		: cipher_scheme(text_size, key_size, cipher_size) {};
+	graphic_scheme(size_type text_size, size_type key_size, size_type cipher_size);
 	
 	graphic_scheme& add_element(const factory_package& element_package);
-	graphic_scheme& delete_element(const full_name& full_name);
+	graphic_scheme& delete_element(const full_name_t& full_name);
 
-	graphic_info graphic_information(const full_name& name);
+	graphic_info graphic_information(const full_name_t& name);
 	graphic_info graphic_information(const id_t& id);
 
-	wires get_wires() const;
+	g_info& info_ref(const id_t& id);
 
-	bool is_true(id element_id, size_type out_pin) const;
+
+	bool is_true(const id_t element_id, size_type out_pin) ;
 
 
 private:

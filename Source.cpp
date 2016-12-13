@@ -3,7 +3,7 @@
 
 
 int main()
-{
+{ 
 	std::cout << std::boolalpha << cry::foo::is_invertible(int_vector({ 0, 1, 3, 2, 5, 6, 4 })) << std::endl;
 	std::cout << std::boolalpha << cry::foo::is_invertible(int_vector({ 0, 1, 3, 2, 5, 7, 4 })) << std::endl;
 	std::cout << std::boolalpha << cry::foo::is_invertible(int_vector({ 1, 1, 3, 2, 5, 6, 4 })) << std::endl;

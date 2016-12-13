@@ -53,8 +53,11 @@ public methods:
 	bitset_t output() const;
 
 	bitset_t& input_ref();
+	bitset_t& output_ref();
 
-	bool output_bit(size_type bit_index);
+	bool input(size_type bit);
+	bool output(size_type bit);
+
 	
 	iosize_t size()  const;
 	iosize_t::type osize() const;
