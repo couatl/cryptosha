@@ -7,14 +7,23 @@
 #include <map>
 #include <utility>
 #include <iostream>
-#include <boost/dynamic_bitset.hpp>
-#include <boost/bimap.hpp>
-#include <boost/any.hpp>
 #include <fstream>
 #include <stack>
 #include <regex>
 #include <thread>
+#include <tuple>
 
+
+#include <boost/dynamic_bitset.hpp>
+#include <boost/bimap.hpp>
+#include <boost/any.hpp>
+
+
+/*#include "../boost/dynamic_bitset.hpp"
+#include "../boost/bimap.hpp"
+#include "../boost/any.hpp"
+#include "../boost/tuple/tuple.hpp"
+*/
 #include "Interpretator/cparse/shunting-yard.h"
 
 
@@ -36,6 +45,7 @@ namespace cry {
 	using int_vector = std::vector<uint32_t>;
 
 	using   string_t = std::string;
+	using    strings = std::list<string_t>;
 	using   report_t = string_t;
 	using     name_t = string_t;
 	using expression_t = string_t;
@@ -48,6 +58,7 @@ namespace cry {
 
 	using exception_t = std::invalid_argument;
 	using bad_any_cast = boost::bad_any_cast;
+
 
 
 	using  int_t = decltype(calculator::calculate("0").asInt());
@@ -74,6 +85,38 @@ namespace cry {
 		gsize_t(type x_, type y_) : x(x_), y(y_) {};
 	};
 
+	template<class T1, class T2>
+	struct tie2{
+		T1 arg1;
+		T2 arg2;
+
+		tie2(const T1& argument1, const T2& argument2)
+			: args1(argument1), args2(argument2) {}
+
+		
+		friend bool operator< (const tie2<T1,T2>& lhs, const tie2<T1,T2>& rhs)
+		{
+			if (lhs.arg1 < rhs.arg1)
+				return true;
+			if (lhs.arg1 > rhs.arg1)
+				return false;
+
+			if (lhs.arg2 < rhs.arg2)
+				return true;
+
+			return false;
+
+		}
+
+		
+
+	};
+
+	template<class T1, class T2>
+	tie2<T1, T2> make_tie2(const T1& argument1, const  T2& argument2)
+	{
+		return tie2<T1, T2>(argument1, argument2);
+	}
 
 	//and functions
 	using boost::any_cast;
@@ -230,6 +273,10 @@ namespace cry {
 			static const string_t m_for = string_t("\\s*for\\s*\\(\\s*(.+)\\s*;\\s*(.+)\\s*;\\s*(.+)\\s*\\)\\s*");
 			static const string_t add_s_p = string_t("\\s*add\\s*\\(\\s*(\\w+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\w)(\<[\\s*\\d+\\s+]+\>)\\s*\\)\\s*");
 		
+			static const string_t run_element = string_t("\\s*run_element\\s*\\(\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*\\)\\s*");
+			static const string_t run_scheme = string_t("\\s*run_scheme\\s*\\(\\s*\<(.+)\>\\s*\\)\\s*");
+			static const string_t run_layer = string_t("\\s*run_layer\\s*\\(\\s*(d+)\\s*\,\\s*\<(.+)\>\\s*");
+			static const string_t greatest_potentional = string_t("\\s*greatest_potentional\\s*\\(\\s*@(.+)\\s*\,\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*");
 		}
 
 		namespace regs
@@ -243,6 +290,10 @@ namespace cry {
 			static const std::regex assinging(regs_str::assinging);
 			static const std::regex m_for(regs_str::m_for);
 			static const std::regex add_s_p(regs_str::add_s_p);
+			static const std::regex run_element(regs_str::run_element);
+			static const std::regex run_scheme(regs_str::run_scheme);
+			static const std::regex run_layer(regs_str::run_layer);
+			static const std::regex greatest_potentional(regs_str::greatest_potentional);
 		}
 	}
 
@@ -260,6 +311,11 @@ namespace cry {
 			run,
 			connect,
 			disconnect,
+
+			run_element,
+			run_scheme,
+			run_layer,
+			greatest_potentional,
 
 			show,
 			draw,
@@ -405,6 +461,25 @@ namespace cry {
 					expression_list names; ///< if list is empty, Anaconda will draw the whole circuit
 				};
 
+				struct _run_element {
+					expression_t element_name;
+					strings bitset_pool;
+				};
+
+				struct _run_scheme {
+					strings bitset_pool;
+				};
+
+				struct _run_layer {
+					expression_t layer_number;
+					strings bitset_pool;
+				};
+
+				struct _greatest_potentional {
+					expression_t element_name;
+					string_t diff;
+					strings bitset_pool;
+				};
 
 			}
 
@@ -418,6 +493,11 @@ namespace cry {
 			using connect = invis::_connect;
 			using disconnect = invis::_disconnect;
 			using expression = expression_t;
+
+			using run_element = invis::_run_element;
+			using run_scheme = invis::_run_scheme;
+			using run_layer = invis::_run_layer;
+			using greatest_potentional = invis::_greatest_potentional;
 
 			using draw = invis::_draw;
 		}
