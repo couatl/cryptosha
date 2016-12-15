@@ -44,10 +44,10 @@ string_t foo::bitset_to_str(const bitset_t& bs, size_type size)
 	}
 
 
-	std::vector<bitset_t> foo::mask_to_bitset(const string_t & str)
+	std::set<bitset_t> foo::mask_to_bitset(const string_t & str)
 	{
 		/*if (str.size() != size)
-		throw std::invalid_argument(msg::inv_input);*/
+			throw std::invalid_argument(msg::inv_input);*/
 
 
 		std::vector<string_t> buff;
@@ -77,10 +77,10 @@ string_t foo::bitset_to_str(const bitset_t& bs, size_type size)
 
 		}
 
-		std::vector<bitset_t> vec;
+		std::set<bitset_t> vec;
 		for (size_t i = 0; i < buff.size(); i++)
 		{
-			vec.push_back(bitset_t(buff[i]));
+			vec.insert(bitset_t(buff[i]));
 		}
 		return vec;
 	}
