@@ -20,7 +20,7 @@ namespace cryptosha
 		{
 			if (it->size() != _bitset_len)
 				throw std::invalid_argument("Wrong size of bitset");
-			set.push_back(*it);
+			pool.insert(*it);
 		}
 
 	}
@@ -33,7 +33,7 @@ namespace cryptosha
 		{
 			if (it->size() != _bitset_len)
 				throw std::invalid_argument("Wrong size of bitset");
-			set.push_back(*it);
+			pool.insert(*it);
 		}
 
 	}
@@ -45,19 +45,29 @@ namespace cryptosha
 		{
 			if (vec[i].size() != _bitset_len)
 				throw std::invalid_argument("Invalid argument");
-			set.push_back(vec[i]);
+			pool.insert(vec[i]);
+		}
+	}
+
+	bitset_pool::bitset_pool(const std::vector<string_t> & obj)
+	{
+		bitset_pool buf(obj[0]);
+		_bitset_len = buf.bitset_len();
+		for (size_t i = 0; i < obj.size(); i++)
+		{
+			this->add(bitset_pool(obj[i]));
 		}
 	}
 
 	bitset_pool::bitset_pool(const string_t & mask) : _bitset_len(size_type(mask.length()))
 	{
-		set = foo::mask_to_bitset(mask);
+		pool = foo::mask_to_bitset(mask);
 	}
 
 	bitset_pool::bitset_pool(const bitset_pool & obj) : _bitset_len(obj.bitset_len())
 	{
-		for (auto it = obj.set.begin(); it != obj.set.end(); ++it)
-			set.push_back(*it);
+		for (auto it = obj.pool.begin(); it != obj.pool.end(); ++it)
+			pool.insert(*it);
 	}
 
 	void bitset_pool::add(bitset_t obj)
@@ -66,18 +76,26 @@ namespace cryptosha
 			_bitset_len = obj.size();
 		else if (obj.size() != _bitset_len)
 			throw std::invalid_argument("Wrong size of bitset");
-		set.push_back(obj);
+		pool.insert(obj);
+	}
+
+	void bitset_pool::add(const bitset_pool & obj)
+	{
+		for (size_t i = 0; i < obj.size(); i++)
+		{
+			this->add(obj[i]);
+		}
 	}
 
 	bitset_t bitset_pool::remove(bitset_t obj)
 	{
 		bitset_t a;
-		for (auto i = set.begin(); i != set.end(); ++i)
+		for (auto i = pool.begin(); i != pool.end(); ++i)
 		{
 			if (*i == obj)
 			{
 				a = *i;
-				set.erase(i);
+				pool.erase(i);
 				return a;
 			}
 		}
@@ -86,7 +104,7 @@ namespace cryptosha
 
 	size_type bitset_pool::size() const
 	{
-		return set.size();
+		return pool.size();
 	}
 
 	size_type  bitset_pool::bitset_len() const
@@ -104,11 +122,11 @@ namespace cryptosha
 
 		_bitset_len = obj.bitset_len();
 
-		set.clear();
+		pool.clear();
 
 		for (size_t i = 0; i < _bitset_len; i++)
 		{
-			set.push_back(obj.set[i]);
+			pool.insert(obj[i]);
 		}
 		return *this;
 	}
@@ -119,14 +137,17 @@ namespace cryptosha
 		{
 			if (it->size() != _bitset_len)
 				throw std::invalid_argument("Wrong size of bitset");
-			set.push_back(*it);
+			pool.insert(*it);
 		}
 		return *this;
 	}
 
 	bitset_t bitset_pool::operator[](size_type pos) const
 	{
-		return set[pos];
+		auto it = pool.begin();
+		for (size_t i = 0; i < pos; i++)
+			++it;
+		return *pool.find(*it);
 	}
 
 	bitset_pool & bitset_pool::operator^=(const bitset_pool & obj)
@@ -134,7 +155,7 @@ namespace cryptosha
 		if (obj.size() != this->size() || obj.bitset_len() != this->bitset_len())
 			throw std::invalid_argument("Wrong size");
 		for (size_t i = 0; i < obj.size(); i++)
-			set[i] ^= obj.set[i];
+			(*this)[i] ^= obj[i];
 		return *this;
 	}
 
@@ -143,7 +164,7 @@ namespace cryptosha
 		if (obj.size() != this->size() || obj.bitset_len() != this->bitset_len())
 			throw std::invalid_argument("Wrong size");
 		for (size_t i = 0; i < obj.size(); i++)
-			set[i] &= obj.set[i];
+			(*this)[i] &= obj[i];
 		return *this;
 	}
 
@@ -152,7 +173,7 @@ namespace cryptosha
 		if (obj.size() != this->size() || obj.bitset_len() != this->bitset_len())
 			throw std::invalid_argument("Wrong size");
 		for (size_t i = 0; i < obj.size(); i++)
-			set[i] |= obj.set[i];
+			(*this)[i] |= obj[i];
 		return *this;
 	}
 
@@ -160,7 +181,7 @@ namespace cryptosha
 	{
 		for (size_t i = 0; i < obj.size(); i++)
 		{
-			out << obj.set[i] << ' ';
+			out << obj[i] << ' ';
 		}
 		out << std::endl;
 		return out;

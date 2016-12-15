@@ -40,11 +40,15 @@ public:
 
 	bitset_pool(const std::vector<bitset_t> &);
 
+	bitset_pool(const std::vector<string_t> &);
+
 	bitset_pool(const string_t &);
 
 	bitset_pool(const bitset_pool &);
 
 	void add(bitset_t);
+
+	void add(const bitset_pool &);
 
 	bitset_t remove(bitset_t);
 
@@ -55,7 +59,7 @@ public:
 	~bitset_pool();
 
 private:
-	std::vector<bitset_t> set;
+	std::set<bitset_t> pool;
 	size_type _bitset_len;
 };
 
