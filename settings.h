@@ -454,7 +454,7 @@ namespace cry {
 		string_t bitset_to_str(const bitset_t& bs, size_type size);
 		bitset_t str_to_bitset(const string_t& str, size_type size);
 
-		std::vector<bitset_t> mask_to_bitset(const string_t & str);
+		std::set<bitset_t> mask_to_bitset(const string_t & str);
 		bitset_t hex_to_bitset(const string_t & str, size_type size);
 		string_t bitset_to_hex(const bitset_t& bs);
 
