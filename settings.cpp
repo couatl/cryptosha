@@ -47,7 +47,7 @@ string_t foo::bitset_to_str(const bitset_t& bs, size_type size)
 	std::set<bitset_t> foo::mask_to_bitset(const string_t & str)
 	{
 		/*if (str.size() != size)
-			throw std::invalid_argument(msg::inv_input);*/
+		throw std::invalid_argument(msg::inv_input);*/
 
 
 		std::vector<string_t> buff;

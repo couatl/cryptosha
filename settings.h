@@ -352,27 +352,19 @@ namespace cry {
 
 				struct _script {
 					string_t ofstream;
-
-
 				};
 
 				struct _assigning {
 					expression_t left_part;
 					expression_t expression;
-
-
 				};
 
 				struct _goto_after {
 					mark_t mark;
-
-					
 				};
 
 				struct _free {
 					expression_t value_name;
-
-
 				};
 
 				struct _add_element {
@@ -554,11 +546,16 @@ namespace cry {
 			static const string_t key("key");
 		}
 
+		static const string_t this_scheme("this");
+
 		static const string_t output("out");
 		static const string_t input("in");
 		static const string_t run("run");
 		static const string_t pos("pos");
 		static const string_t gsize("gsize");
+		
+		static const string_t iosize("iosize");
+
 		static const string_t x("x");
 		static const string_t y("y");
 		

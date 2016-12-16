@@ -38,14 +38,15 @@ public:
 			return std::tie(pin1, pin2);
 		}
 
-		pin_pair_t swap()
+		pin_pair_t get_reverse()
 		{
-			std::swap(pin1, pin2);
+			pin_pair_t(pin2, pin1);
 		}
 	};
 	struct	id_pair_t {
 		id_t id1;
 		id_t id2;
+
 		id_pair_t(id_t id_1, id_t id_2) : id1(id_1), id2(id_2) {}
 
 		auto tie() const
@@ -53,9 +54,9 @@ public:
 			return std::tie(id1, id2);
 		}
 
-		id_pair_t swap()
+		id_pair_t get_reverse()
 		{
-			std::swap(id1, id2);
+			id_pair_t(id2, id1);
 		}
 
 		bool operator< (const id_pair_t& rhs)
@@ -121,6 +122,7 @@ public:
 	id_t  element_id(const full_name_t& name);
 	element_ptr element(const full_name_t& name);
 	element_ptr element(const id_t& id);
+
 	const wires_t&   wires();
 	const circuit_t& circuit();
 

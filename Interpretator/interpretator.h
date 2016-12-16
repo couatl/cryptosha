@@ -115,6 +115,16 @@ namespace cryptosha {
 				report_t doit(handler_t& handler) override;
 			};
 
+			struct assembly : public base
+			{
+				report_t doit(handler_t& handler) override;
+			};
+
+			struct run : public base
+			{
+				report_t doit(handler_t& handler) override;
+			};
+
 		}
 
 
@@ -130,10 +140,15 @@ namespace cryptosha {
 				 : reader(in, out)
 			{
 				handler.schemes[this_scheme_name] = scheme_ptr(new scheme(text_size, key_size, cipher_size));
+
 				operations[code::keyword_t::add_element] = std::move(operation_ptr_t(new operations::add_element()));
 				operations[code::keyword_t::assinging] = std::move(operation_ptr_t(new operations::assigning()));
 				operations[code::keyword_t::goto_after] = std::move(operation_ptr_t(new operations::goto_after()));
 				operations[code::keyword_t::connect] = std::move(operation_ptr_t(new operations::connect()));
+				operations[code::keyword_t::assembly] = std::move(operation_ptr_t(new operations::assembly()));
+				operations[code::keyword_t::run] = std::move(operation_ptr_t(new operations::run()));
+
+
 			}
 
 			interpretator& update_code(code::code_type&& new_code)
@@ -169,6 +184,11 @@ namespace cryptosha {
 			{
 				handler.code = reader.read();
 				return *this;
+			}
+
+			bool ifstream_good() const
+			{
+				return reader.ifstream_good();
 			}
 
 		private:

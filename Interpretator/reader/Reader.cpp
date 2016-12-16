@@ -220,6 +220,48 @@ namespace funcs
 
 		return cmd;
 	}
+
+	code::types::run_element run_element(string_t str)
+	{
+		code::types::run_element cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::run_element);
+		cmd.element_name = res[1].str();
+		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[2].str(), ",");
+		return cmd;
+	}
+
+	code::types::run_scheme run_scheme(string_t str)
+	{
+		code::types::run_scheme cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::run_scheme);
+		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[1].str(), ",");
+		return cmd;
+	}
+
+	code::types::run_layer run_layer(string_t str)
+	{
+		code::types::run_layer cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::run_layer);
+		cmd.layer_number = res[1].str();
+		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[2].str(), ",");
+		return cmd;
+	}
+
+	code::types::greatest_potentional greatest_potentional(string_t str)
+	{
+		code::types::greatest_potentional cmd;
+		std::smatch res;
+		std::regex_search(str, res, syntax::regs::greatest_potentional);
+		cmd.element_name = res[1].str();
+		cmd.diff = res[2].str();
+		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[3].str(), ",");
+		return cmd;
+	}
+
+
 }
 
 
@@ -338,12 +380,14 @@ namespace cryptosha
 			code_element.keyword = code::keyword_t::assembly;
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
+			code_element.command = 42;
 		}
 		if (std::regex_match(input_str, syntax::regs::run))
 		{
 			code_element.keyword = code::keyword_t::run;
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
+			code_element.command = 42;
 		}
 		else if (std::regex_match(input_str, syntax::regs::del))
 		{
@@ -380,7 +424,34 @@ namespace cryptosha
 			code_element.condition = condition;
 			code_element.mark = mark_number++;
 		}
-
+		else if (std::regex_match(input_str, syntax::regs::run_element))
+		{
+			code_element.keyword = code::keyword_t::run_element;
+			code_element.command = funcs::run_element(input_str);
+			code_element.condition = condition;
+			code_element.mark = mark_number++;
+		}
+		else if (std::regex_match(input_str, syntax::regs::run_scheme))
+		{
+			code_element.keyword = code::keyword_t::run_scheme;
+			code_element.command = funcs::run_scheme(input_str);
+			code_element.condition = condition;
+			code_element.mark = mark_number++;
+		}
+		else if (std::regex_match(input_str, syntax::regs::run_layer))
+		{
+			code_element.keyword = code::keyword_t::run_layer;
+			code_element.command = funcs::run_layer(input_str);
+			code_element.condition = condition;
+			code_element.mark = mark_number++;
+		}
+		else if (std::regex_match(input_str, syntax::regs::greatest_potentional))
+		{
+			code_element.keyword = code::keyword_t::greatest_potentional;
+			code_element.command = funcs::greatest_potentional(input_str);
+			code_element.condition = condition;
+			code_element.mark = mark_number++;
+		}
 
 		return code_element;
 	}
@@ -498,7 +569,18 @@ namespace cryptosha
 	{
 		output.get() << output::begin_str;
 		string_t str = input_handle();
+		
+		if (!ancillary_funcs::space_free(str).size())
+		{
+			code::simple_command code_element;
+			code_element.condition = string_t("0");
+			code::code_type result;
+			result.push_back(code_element);
+			return result;
+		}
+
 		list_handle(str_to_list(str));
+
 		while (!ns_stack.empty())
 		{
 			output.get() << output::begin_tab_str;

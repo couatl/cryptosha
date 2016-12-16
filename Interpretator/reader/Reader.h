@@ -40,7 +40,10 @@ namespace cryptosha
 		~console_reader()
 		{}
 		
-
+		bool ifstream_good() const
+		{
+			return input.get().good();
+		}
 		
 
 	private:

@@ -118,10 +118,12 @@ cipher_scheme& cipher_scheme::get_circuit_to(circuit_t & circuit)
 cipher_scheme& cipher_scheme::get_wires_from(wires_t&& wires)
 {
 	m_wires = std::move(wires);
+	return *this;
 }
 cipher_scheme& cipher_scheme::get_circuit_from(circuit_t&& circuit)
 {
 	m_circuit = std::move(circuit);
+	return *this;
 }
 
 
@@ -173,11 +175,12 @@ bitset_t cipher_scheme::run()
 	auto text_buffer_id = m_name_id.at(scheme::names::text);
 	auto key_buffer_id  = m_name_id.at(scheme::names::key);
 
-	for (auto layer_cit = m_circuit.cbegin(); layer_cit != m_circuit.cend(); ++layer_cit)
-	{
-		for (auto pool_cit = layer_cit->cbegin(); pool_cit != layer_cit->cend(); ++pool_cit)
+	if(true){
+		auto layer_cit = m_circuit.cbegin();
+		for (++layer_cit; layer_cit != m_circuit.cend(); ++layer_cit)
 		{
-			if (*pool_cit != text_buffer_id && *pool_cit != text_buffer_id) {
+			for (auto pool_cit = layer_cit->cbegin(); pool_cit != layer_cit->cend(); ++pool_cit)
+			{
 				m_elements[*pool_cit]->set_null();
 			}
 		}
@@ -187,6 +190,8 @@ bitset_t cipher_scheme::run()
 	{
 		for (auto pool_cit = layer_cit->cbegin(); pool_cit != layer_cit->cend(); ++pool_cit)
 		{
+			auto k = m_elements[*pool_cit]->input().to_ulong();
+
 			m_elements[*pool_cit]->run();
 
 
@@ -200,6 +205,8 @@ bitset_t cipher_scheme::run()
 	}
 
 	m_output = m_elements[m_name_id.at(full_name_t(scheme::names::cipher))]->run();
+
+	auto k = m_output.to_ulong();
 
 	return m_output;
 }

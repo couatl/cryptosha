@@ -116,7 +116,7 @@ auto ns_c_a::calculator::get_names(const string_t& expression) -> nameslist_t
 auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& parsed_name)->int_t
 {
 	auto it = parsed_name.cbegin();
-	auto fname = elements::graphic_scheme::full_name(it->first, std::stoul(it->second));
+	auto fname = elements::graphic_scheme::full_name_t(it->first, std::stoul(it->second));
 	auto element_ptr = scheme->element(fname);
 	++it;
 
@@ -125,6 +125,7 @@ auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& pars
 		return element_ptr->set_input(std::stoull(it->second)).run().to_ulong();
 	}
 	
+
 	string_t func_part = "";
 	for (; it != parsed_name.cend(); ++it)
 	{
@@ -132,15 +133,22 @@ auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& pars
 	}
 
 
-	if (func_part == cry::scheme::output + null_part) {
+	if (func_part == cry::scheme::output) {
 		return element_ptr->output().to_ulong();
 	}
-	if (func_part == cry::scheme::input + null_part) {
+	if (func_part == cry::scheme::input) {
 		return element_ptr->input().to_ulong();
 	}
 	
 	auto id = scheme->element_id(fname);
 	auto graphic_info = scheme->graphic_information(id);
+
+	if (func_part == cry::scheme::iosize + cry::scheme::input) {
+		return graphic_info.iosize.in;
+	}
+	if (func_part == cry::scheme::iosize + cry::scheme::output) {
+		return graphic_info.iosize.out;
+	}
 
 	if (func_part == cry::scheme::gsize + cry::scheme::x) {
 		return graphic_info.size.x;
@@ -148,6 +156,7 @@ auto ns_c_a::calculator::get_value(scheme_ptr& scheme, name_type::parsed_t& pars
 	if (func_part == cry::scheme::gsize + cry::scheme::y) {
 		return graphic_info.size.y;
 	}
+
 	if (func_part == cry::scheme::pos + cry::scheme::x) {
 		return graphic_info.position.x;
 	}
@@ -491,8 +500,8 @@ report_t ns_c_a::operations::connect::doit(handler_t& handler)
 		return report_t("invalid name : " + name_receiver.name);
 	}
 
-	elements::cipher_scheme::full_name sender_full_name = { name_sender.parsed.front().first, foo::to_int_t(name_sender.parsed.front().second) };
-	elements::cipher_scheme::full_name receiver_full_name = { name_receiver.parsed.front().first, foo::to_int_t(name_receiver.parsed.front().second) };
+	elements::cipher_scheme::full_name_t sender_full_name = { name_sender.parsed.front().first, foo::to_int_t(name_sender.parsed.front().second) };
+	elements::cipher_scheme::full_name_t receiver_full_name = { name_receiver.parsed.front().first, foo::to_int_t(name_receiver.parsed.front().second) };
 
 	{
 		auto s_end = option.pins_of_sender.cend();
@@ -501,7 +510,7 @@ report_t ns_c_a::operations::connect::doit(handler_t& handler)
 
 		for (; s_it != s_end; ++s_it, ++r_it)
 		{
-			using pin_t = decltype(scheme_ptr)::element_type::pin;
+			using pin_t = decltype(scheme_ptr)::element_type::pin_t;
 
 			pin_t pin_of_sender = calculator::calculate(*s_it, handler.variables, scheme_ptr);
 			pin_t pins_of_receiver = calculator::calculate(*r_it, handler.variables, scheme_ptr);
@@ -513,8 +522,29 @@ report_t ns_c_a::operations::connect::doit(handler_t& handler)
 	return report_t("wires is added successfully");
 }
 
+report_t ns_c_a::operations::assembly::doit(handler_t& handler)
+{
+	auto name_of_scheme = this_scheme_name;
+	auto scheme_ptr = handler.schemes.at(name_of_scheme);
 
+	try {
+		scheme_ptr->assembly();
+	}
+	catch (exception_t& a) {
+		return report_t(a.what());
+	}
 
+	return report_t(" GGWP : scheme is assebled correctly");
+}
 
+report_t ns_c_a::operations::run::doit(handler_t& handler)
+{
+	auto name_of_scheme = this_scheme_name;
+	auto scheme_ptr = handler.schemes.at(name_of_scheme);
+
+	scheme_ptr->run();
+
+	return report_t("run...");
+}
 
 

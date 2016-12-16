@@ -35,7 +35,7 @@ public ctors:
 	explicit basic_element(iosize_t::type size_in, iosize_t::type size_out);
 
 	explicit basic_element(const basic_element&) = default;
-	explicit basic_element(basic_element&&) = default;
+//	explicit basic_element(basic_element&&) = default;
 
 public methods:
 	basic_element& set_input(const bitset_t& input_bitset);
