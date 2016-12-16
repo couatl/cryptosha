@@ -90,3 +90,62 @@ namespace cryptosha {
 О регулирующем файле будет сказано практически во всех последующих главах, поэтому не стоит тут останавливаться на этом файле.
 
 ### Базовый элемент
+
+```c++
+
+class elements::basic_element 
+{
+
+public ctors:
+	explicit basic_element(iosize_t::type size_in, iosize_t::type size_out);
+
+	explicit basic_element(const basic_element&) = default;
+//	explicit basic_element(basic_element&&) = default;
+
+public methods:
+	basic_element& set_input(const bitset_t& input_bitset);
+	basic_element& set_input(bitset_t&& input_bitset);
+	basic_element& set_input(const string_t& input_bitstr);
+	basic_element& set_input(string_t&& input_bitstr);
+	basic_element& set_input(int_t value);
+
+	basic_element& set_null();
+
+	virtual bitset_t run() = 0;
+
+	
+	bitset_t input() const;
+	bitset_t output() const;
+
+	bitset_t& input_ref();
+	bitset_t& output_ref();
+
+	bool input(size_type bit);
+	bool output(size_type bit);
+
+	
+	iosize_t size()  const;
+	iosize_t::type osize() const;
+	iosize_t::type isize() const;
+
+	inline static size_type get_element_count();
+
+	dtor virtual ~basic_element();
+
+protected data:
+	iosize_t  m_size;
+
+	bitset_t  m_input;
+	bitset_t  m_output;
+
+protected states:
+	state_t m_state;
+
+private static_data:
+	static size_type  g_obj_count;
+
+private methods:	
+	inline void _ctor();
+
+};
+```
