@@ -1,3 +1,23 @@
-for (i = 0; i < 8; a = 1 + i){
-	add xor @my_xor 8->4 p(200*a, 50) s(40,10)
+for( q = 1 ; q ; q = 0 ){
+	
+	@text.in = 43106
+	@key.in = 53399
+
+	for (i = 0; i < 2; i = 1 + i){
+		
+		add( xor, @my_xor[i], 16, 8, < 200*i, 50> , < 50,10 >)
+		
+		for (j = 0; j < 8; j= j+ 1){
+			connect(@text , < 8*i + j > , @my_xor[i] , < j >)
+			connect(@key , < 8*i + j > , @my_xor[i] , < @my_xor[i].iosize.out + j > )
+			connect(@my_xor[i] , < j >, @cipher ,< 8*i + j >)
+		} 	
+	}
+
+	assembly
+	run
+
+	cipher = @cipher.out
 }
+
+
