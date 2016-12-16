@@ -168,7 +168,7 @@ namespace funcs
 		code::types::add_element cmd;
 		std::smatch res;
 		std::regex_search(str, res, syntax::regs::add);
-		cmd.element_name_index = res[2].str();
+		cmd.element_name = res[2].str();
 		cmd.element_key = code::name_to_element_key.at(res[1].str());
 		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
 		if (res[5].str().size())
@@ -181,7 +181,7 @@ namespace funcs
 			cmd.graphic_x = string_t("");
 			cmd.graphic_y = string_t("");
 		}
-		if (res[7].str().size())
+		if (res[8].str().size())
 		{
 			cmd.graphic_width = res[9].str();
 			cmd.graphic_height = res[10].str();
@@ -191,7 +191,7 @@ namespace funcs
 			cmd.graphic_width = string_t("");
 			cmd.graphic_height = string_t("");
 		}
-
+	
 
 		return cmd;
 	}
@@ -201,21 +201,32 @@ namespace funcs
 		code::types::add_element cmd;
 		std::smatch res;
 		std::regex_search(str, res, syntax::regs::add_s_p);
-		cmd.element_name_index = res[2].str();
+		cmd.element_name = res[2].str();
 		cmd.element_key = code::name_to_element_key.at(res[1].str());
 		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
-		
-		switch (cmd.element_key)
+		if (res[1].str() == "sbox")
+			cmd.extra_options.insert({ code::keys::s_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+		else if (res[1].str() == "p-block")
+			cmd.extra_options.insert({ code::keys::p_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+		if (res[7].str().size())
 		{
-		case element_keys::simple_sbox :
-			cmd.extra_options.insert({ code::types::add_element::keys::s_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
-			break;
-		case element_keys::p_block :
-			cmd.extra_options.insert({ code::types::add_element::keys::p_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
-			break;
-		default:
-			throw exception_t("unknown element, but it looks like p-block or simple sbox");
-			break;
+			cmd.graphic_x = res[8].str();
+			cmd.graphic_y = res[9].str();
+		}
+		else
+		{
+			cmd.graphic_x = string_t("");
+			cmd.graphic_y = string_t("");
+		}
+		if (res[10].str().size())
+		{
+			cmd.graphic_width = res[11].str();
+			cmd.graphic_height = res[12].str();
+		}
+		else
+		{
+			cmd.graphic_width = string_t("");
+			cmd.graphic_height = string_t("");
 		}
 
 		return cmd;
