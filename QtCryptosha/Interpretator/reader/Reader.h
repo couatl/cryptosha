@@ -36,6 +36,7 @@ namespace cryptosha
 		std::ostream& get_output();
 		
 		code::code_type read();
+		code::code_type read(string_t&&);
 
 		~console_reader()
 		{}
