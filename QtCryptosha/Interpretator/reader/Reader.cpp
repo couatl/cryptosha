@@ -609,7 +609,25 @@ namespace cryptosha
 		mark_number = 0;
 		return result;
 	}
-
+	
+	code::code_type console_reader::read(string_t&& input_str)
+	{
+		code::code_type result;
+		string_t str = input_str;
+		if (!ancillary_funcs::space_free(str).size())
+		{
+			code::simple_command code_element;
+			code_element.condition = string_t("0");
+			result.push_back(code_element);
+			return result;
+		}
+		list_handle(str_to_list(str));
+		result = code;
+		code.clear();
+		mark_number = 0;
+		return result;
+	}
+	
 	void console_reader::set_input(std::istream& in)
 	{
 		input = std::ref(in);
