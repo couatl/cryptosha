@@ -561,6 +561,10 @@ namespace cry {
 		
 	}
 
+	namespace gui
+	{
+		static const string_t script_name("script.txt");
+	}
 }
 
 namespace cryptosha {

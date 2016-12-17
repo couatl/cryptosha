@@ -168,7 +168,7 @@ namespace funcs
 		code::types::add_element cmd;
 		std::smatch res;
 		std::regex_search(str, res, syntax::regs::add);
-		cmd.element_name = res[2].str();
+		cmd.element_name_index = res[2].str();
 		cmd.element_key = code::name_to_element_key.at(res[1].str());
 		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
 		if (res[5].str().size())
@@ -201,13 +201,15 @@ namespace funcs
 		code::types::add_element cmd;
 		std::smatch res;
 		std::regex_search(str, res, syntax::regs::add_s_p);
-		cmd.element_name = res[2].str();
+		cmd.element_name_index = res[2].str();
 		cmd.element_key = code::name_to_element_key.at(res[1].str());
 		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
-		if (res[1].str() == "sbox")
-			cmd.extra_options.insert({ code::keys::s_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
-		else if (res[1].str() == "p-block")
-			cmd.extra_options.insert({ code::keys::p_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+
+		if (res[1].str() == syntax::element_names::simple_sbox)
+			cmd.extra_options.insert({ code::types::add_element::keys::s_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+		else if (res[1].str() == syntax::element_names::p_block)
+			cmd.extra_options.insert({ code::types::add_element::keys::p_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
+
 		if (res[7].str().size())
 		{
 			cmd.graphic_x = res[8].str();
@@ -215,8 +217,8 @@ namespace funcs
 		}
 		else
 		{
-			cmd.graphic_x = string_t("");
-			cmd.graphic_y = string_t("");
+			cmd.graphic_x = expression_t("");
+			cmd.graphic_y = expression_t("");
 		}
 		if (res[10].str().size())
 		{
@@ -225,8 +227,8 @@ namespace funcs
 		}
 		else
 		{
-			cmd.graphic_width = string_t("");
-			cmd.graphic_height = string_t("");
+			cmd.graphic_width = expression_t("");
+			cmd.graphic_height = expression_t("");
 		}
 
 		return cmd;

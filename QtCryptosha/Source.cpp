@@ -1,6 +1,9 @@
 #include "./cryptosha.hpp"
-#include <QtCore>
+//#include <QtCore>
 
+
+
+/*
 int main(int argc, char *argv[])
 {
 
@@ -28,3 +31,4 @@ int main(int argc, char *argv[])
 	system("pause");
 	return 0;
 }
+*/
