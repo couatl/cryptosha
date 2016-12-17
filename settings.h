@@ -264,14 +264,15 @@ namespace cry {
 
 			static const string_t assinging = string_t("\\s*(.+)\\s*") + keywords::op_assigning + string_t("\\s*(.+)\\s*");
 			static const string_t add = string_t \
-				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)?\\s*\\)\\s*");
+				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,?\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,?\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)?\\s*\\)\\s*");
 			static const string_t del = string_t("\\s*del\\s*\\(\\s*@(.+)\\s*\\)\\s*");
 			static const string_t assembly = string_t("\\s*assembly\\s*");
 			static const string_t run = string_t("\\s*run\\s*");
 			static const string_t script = string_t("\\s*script\\s*\\((\\w+\\.txt)\\s*\\)\\s*");
 			static const string_t connect = string_t("\\s*connect\\s*\\(\\s*@(.+)\\s*\,\\s*\<\\s*(.+)\\s*\>\\s*\,\\s*@(.+)\\s*\,\\s*\<\\s*(.+)\\s*\>\\s*\\)\\s*");
 			static const string_t m_for = string_t("\\s*for\\s*\\(\\s*(.+)\\s*;\\s*(.+)\\s*;\\s*(.+)\\s*\\)\\s*");
-			static const string_t add_s_p = string_t("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\w)(\<[\\s*\\d+\\s+]+\>)\,\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)?\\s*\\)\\s*");
+			static const string_t add_s_p = string_t \
+				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\w)(\<[\\s*\\d+\\s+]+\>)\\s*\,?\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,?\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)?\\s*\\)\\s*");
 		
 			static const string_t run_element = string_t("\\s*run_element\\s*\\(\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*\\)\\s*");
 			static const string_t run_scheme = string_t("\\s*run_scheme\\s*\\(\\s*\<(.+)\>\\s*\\)\\s*");
