@@ -195,6 +195,53 @@ private methods:
 - p-block
 
 
+
+
+### Схема шифрования
+
+```c++
+class elements::cipher_scheme : public elements::basic_element
+{
+public:
+
+	cipher_scheme(size_type text_size, size_type key_size, size_type out_size);
+
+	id_t add_element(const factory_package& element_package);
+
+	cipher_scheme& delete_element(const full_name_t& full_name);
+	
+	cipher_scheme& add_connection_fast(const full_name_t& sender_name, pin_t pin_out, \
+		const full_name_t& receiver_name, pin_t pin_in);
+	cipher_scheme& delete_connection(const full_name_t& sender_name, size_type pin_out, \
+		const full_name_t& receiver_name, size_type pin_in);
+
+	cipher_scheme& set_key(const string_t& key_vector);
+	cipher_scheme& set_key(const int_t& key_value);
+	cipher_scheme& set_text(const string_t& text_vector);
+	cipher_scheme& set_text(const int_t& text_value);
+
+	cipher_scheme& assembly();
+	
+	virtual bitset_t run() override;
+
+	id_bitset run(const id_pool_t& element_pool);
+
+	virtual ~cipher_scheme() = default;
+
+protected:
+	names_id_t  m_name_id;
+	wires_t     m_wires;
+	circuit_t   m_circuit;
+	elements_t  m_elements;
+
+	bitset_t    m_key;
+	bitset_t    m_text;
+
+	size_type   m_key_size;
+	size_type   m_text_size;
+};
+```
+
 ### Утилиты для линейного/дифференциального криптоанализа
 В проекте присутствует класс `cryptosha::analysis`, предоставляющий возможность пользователю проводить криптоанализ над шифром. На данный момент в нем несколько методов: прогон множества бинарных наборов через элемент схемы, слой или всю схему, а также нахождение наиболее вероятного дифференциала наборов при заданном дифференциале входных наборов после прогона через элемент.
 
