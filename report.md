@@ -216,10 +216,10 @@ private methods:
 
 Для синтаксического анализа вводимых пользователем строк используется класс console_reader .  
 В качестве полей этот класс содержит в себе : 
-•	стек для хранения блоков кода - `std::stack<stack_elem>` ns_stack,
-•	стек для строк - `std::stack<string_t>` input_stack, 
-•	поток ввода - `std::reference_wrapper<std::istream>` input, 
-•	поток вывода - `std::reference_wrapper<std::ostream>` output,
+•	стек для хранения блоков кода - `std::stack<stack_elem> ns_stack`,
+•	стек для строк - `std::stack<string_t> input_stack`, 
+•	поток ввода - `std::reference_wrapper<std::istream> input`, 
+•	поток вывода - `std::reference_wrapper<std::ostream> output`,
 •	список псевдокода - `code::code_type code`.
 
 Основными методами класса являются private – методы.
