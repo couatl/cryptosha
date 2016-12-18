@@ -124,7 +124,8 @@ namespace cryptosha{
 
 ### Базовый элемент
 
-```c++
+```
+c++
 
 class elements::basic_element 
 {
@@ -192,7 +193,7 @@ private methods:
 ```
 
 Она принимает в параметрах указатель на элемент схемы и множество наборов, которые необходимо прогнать.
-```c++
+```с++
 	bitset_map run_scheme(xScheme_ptr scheme, const bitset_pool & input);
 ```
 
