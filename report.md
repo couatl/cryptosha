@@ -121,11 +121,11 @@ namespace cryptosha{
 	struct iosize_t;
 	struct gsize_t;
 }
+```
 
 ### Базовый элемент
 
-```
-c++
+```c++
 
 class elements::basic_element 
 {
