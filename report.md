@@ -91,7 +91,6 @@ namespace cryptosha {
 Если тип простой, то к литералам названия этого типа прибавляется `_t` :
 
 ```с++
-
 namespace cryptosha{
 	
 	using      any_t = boost::any;
