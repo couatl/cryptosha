@@ -188,7 +188,7 @@ private methods:
 
 Методы прогона похожи по названию и сигнатуре: 
 ```c++
-	bitset_map & run_element(xElement_ptr obj, const bitset_pool & input);
+	bitset_map & run_element(element_ptr obj, const bitset_pool & input);
 ```
 
 Она принимает в параметрах указатель на элемент схемы и множество наборов, которые необходимо прогнать.
@@ -198,13 +198,15 @@ private methods:
 
 Аналогично с run_element, только передается указатель на схему, а не элемент.
 ```c++
-	scheme::layer_bitsets_type run_layer(xScheme::layer_type layer,const bitset_pool & input);
+	cipher_scheme::id_bitset run_layer(layer_t layer,const bitset_pool & input);
 ```
 
+Этот метод прогоняет слой схемы и возвращает объект типа cipher_scheme::id_bitset, который определен как `std::map<id_t, bitset_t>`, где id_t – это id элемента, а bitset_t – битсет.
+А метод для нахождения наиболее вероятного набора имеет такую сигнатуру.
+```c++
+	string_t gretest_potentional(element_ptr obj, const string_t & diff, const bitset_pool & input);
+```
 
-Этот метод прогоняет слой схемы и возвращает объект типа layer_bitsets_type, который определен как std::map<full_name_t, bitset_t>, где full_name_t – это тип имени элемента, а bitset_t – тип битсета.
-А метод для нахождения наиболее вероятного набора имеет такую сигнатуру:
-string_t gretest_potentional(xElement_ptr obj, const string_t & diff, const bitset_pool & input);
 Она принимает указатель на элемент схемы, дифференциал входных наборов и само множество наборов, из которых и берутся значения для прогона.
 Данные методы существенно упростят проведение криптоанализа, в особенности на больших схемах.
 
