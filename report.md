@@ -208,9 +208,9 @@ private methods:
 В Cryptosha пользователь может оперировать следующими унарными элементами:
 - инвертор
 - буфер
-- циклический сдвиг влево/вправо
-- s-box
-- p-block
+- сдвиг влево/вправо
+- подстановка (s-box)
+- перестановка (p-block)
 
 Все элементы унаследованы от базового класса для унарных элементов:
 ```c++
@@ -218,6 +218,7 @@ private methods:
 	{
 	public:
 		explicit unary(iosize_t::type vector_size) : basic_element(vector_size, vector_size) {};
+										//vector_size - размер входной последовательности
 		virtual ~unary() = default;
 	};
 ```
@@ -229,9 +230,10 @@ private methods:
 ```c++
 	buffer(size_type vector_size) : unary(vector_size) {};
 ```
-Циклический сдвиг влево/вправо:
+Сдвиг влево/вправо:
 ```c++
 	explicit shift_left(size_type vector_size,size_type shift_size) : unary(vector_size), m_shift_size(shift_size) {};
+												//shift_size - размер сдвига
 	
 	explicit shift_right(size_type vector_size, size_type shift_size) : unary(vector_size), m_shift_size(shift_size) {};
 ```
@@ -260,36 +262,20 @@ P-block:
 Все элементы унаследованы от базового абстрактного класса:
 ```c++
 	template<class F>
-	class elements::binary : public elements::basic_element
+class elements::binary : public elements::basic_element
+{
+	 F baseFunction;
+public:
+	explicit binary(size_type vector_size) : basic_element(vector_size * 2, vector_size) {} ;
+								//vector_size - размер выходной последовательности
+	virtual ~binary() = default;
+	bitset_t run() override;	// метод, выполняющий преобразование последовательности входных битов
+
+
+};
 ```
-Конъюнкция:
-```c++
-	explicit conjunctor(size_type vector_size) : binary<bf::and>(vector_size) {};
-```
-Дизъюнкция:
-```c++
-	explicit disjunctor(size_type vector_size) : binary<bf::or>(vector_size) {};
-```
-Сумма по модулю 2:
-```c++
-	explicit xor(size_type vector_size) : binary<bf::xor>(vector_size) {};
-```
-Стрелка Пирса:
-```c++
-	explicit nor(size_type vector_size) : binary<bf::nor>(vector_size) {};
-```
-Штрих Шеффера:
-```c++
-	explicit nand(size_type vector_size) : binary<bf::nand>(vector_size) {};
-```
-Эквивалентность:
-```c++
-	explicit equality(size_type vector_size) : binary<bf::equal>(vector_size) {};
-```
-Числовая сумма:
-```c++
-	explicit sum(size_type vector_size) : binary<bf::sum>(vector_size) {};
-```
+
+
 У каждого из данных классов переопределен метод `run()`, который и описывает работу элемента.
 
 ### Схема шифрования
@@ -427,9 +413,6 @@ public – методы класса:
 
 В Графическом интерфейсе представлены два вида отрисовки схем : *структурированная* и *неструктурированная*. Для запуска структурированной отрисовки нужно нажать на кнопку `Draw with AI`, для неструктурированной - `Draw`, после чего происходит отрисовка схемы в окне отрисовки.
 
-![image1](https://pp.vk.me/c836528/v836528012/18fae/AcLBixALCCE.jpg)  
-![image2](https://pp.vk.me/c836528/v836528012/18fa6/A03M5X4gzxM.jpg)  
-
 В случае *структурированной* отрисовки создается список графических слоев, которые, в свою очередь содержат элементы.
 Плюсы данной отрисовки в том, что схема в доступном для восприятия виде – элементы расположены на одном уровне и соблюдается структура физических слоев схемы. Соответственно, при данной отрисовке элементы нельзя передвигать по окну отрисовки. 
 
@@ -437,4 +420,4 @@ public – методы класса:
 Элементы рисуются в координатах, указанных пользователем. Элементы свободно перемещаются вместе со всеми соединениями.
 Плюсы данной отрисовки в том, что пользователь сам ставит элементы в тех точках, в которых он хочет. При этом возможна потеря читабельности схемы и ее логичности. 
 
-Таким образом GUI предоставляет возможность написания кода и просмотра получившейся схемы в двух режимах.
+Таким образом GUI предоставляет возможность написания кода и просмотра получившейся схемы в друх режимах.
