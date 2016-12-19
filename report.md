@@ -24,7 +24,7 @@
 
 >> [Унарные операции](#Унарные-операции)
 
->> Бинарные операции
+>> [Бинарные операции](#)
 
 >> [Схема шифрования](#Схема-шифрования)
 
@@ -238,7 +238,53 @@ P-block:
 	explicit permutation_block(const vector_t& pblock_vector) : unary(pblock_vector.size()), vector(pblock_vector) {}
 ```
 
-У каждого из данных классов переопределен метод `run()`, который и описывает работы элемента.
+У каждого из данных классов переопределен метод `run()`, который и описывает работу элемента.
+
+### Бинарные операции
+
+В проекте предоставляется доступ к следующим бинарным элементам:
+- конъюнкция
+- дизъюнкция
+- сумма по модулю 2
+- стрелка Пирса
+- штрих Шеффера
+- эквивалентность
+- числовая сумма
+
+Все элементы унаследованы от базового абстрактного класса:
+```c++
+	template<class F>
+	class elements::binary : public elements::basic_element
+```
+Конъюнкция:
+```c++
+	explicit conjunctor(size_type vector_size) : binary<bf::and>(vector_size) {};
+```
+Дизъюнкция:
+```c++
+	explicit disjunctor(size_type vector_size) : binary<bf::or>(vector_size) {};
+```
+Сумма по модулю 2:
+```c++
+	explicit xor(size_type vector_size) : binary<bf::xor>(vector_size) {};
+```
+Стрелка Пирса:
+```c++
+	explicit nor(size_type vector_size) : binary<bf::nor>(vector_size) {};
+```
+Штрих Шеффера:
+```c++
+	explicit nand(size_type vector_size) : binary<bf::nand>(vector_size) {};
+```
+Эквивалентность:
+```c++
+	explicit equality(size_type vector_size) : binary<bf::equal>(vector_size) {};
+```
+Числовая сумма:
+```c++
+	explicit sum(size_type vector_size) : binary<bf::sum>(vector_size) {};
+```
+У каждого из данных классов переопределен метод `run()`, который и описывает работу элемента.
 
 ### Схема шифрования
 
