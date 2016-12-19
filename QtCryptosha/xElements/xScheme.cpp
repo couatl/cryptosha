@@ -5,8 +5,12 @@
 using namespace cry::elements;
 
 cipher_scheme::cipher_scheme(size_type text_size, size_type key_size, size_type out_size)
-	: basic_element(text_size + key_size, out_size), m_key_size(key_size), m_text_size(text_size),
-	m_key(key_size), m_text(text_size),
+	: basic_element(text_size + key_size, out_size),
+	m_key_size(key_size),
+	m_text_size(text_size),
+	m_key(key_size),
+	m_text(text_size),
+	g_next_id(0),
 	m_wires([](const id_pair_t& lhs, const id_pair_t& rhs)->bool { return lhs.tie() < rhs.tie(); }),
 	m_name_id([](const full_name_t& lhs, const full_name_t& rhs)->bool { return lhs.tie() < rhs.tie(); })
 {
@@ -196,13 +200,16 @@ bitset_t cipher_scheme::run()
 		}
 	}
 
+	std::ofstream info("scheme_run.txt");
+
 	for (auto layer_cit = m_circuit.cbegin(); layer_cit != m_circuit.cend(); ++layer_cit)
 	{
 		for (auto pool_cit = layer_cit->cbegin(); pool_cit != layer_cit->cend(); ++pool_cit)
 		{
+
 			auto k = m_elements[*pool_cit]->input().to_ulong();
 
-			m_elements[*pool_cit]->run();
+			info << *pool_cit << " ->  [ " << m_elements[*pool_cit]->run() << " ]" << std::endl;
 
 
 			std::for_each(m_wires.cbegin(), m_wires.cend(), [&pool_cit, this](wires_t::value_type wire){

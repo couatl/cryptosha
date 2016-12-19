@@ -26,26 +26,20 @@ namespace cryptosha
 	class console_reader
 	{
 	public:
-		console_reader(std::istream& in, std::ostream& out) : input(in), output(out)
+		console_reader(const string_t& in_name,
+					   const string_t& out_name)
+			: input(in_name), output(out_name)
 		{}
 		
-		void set_input(std::istream&);
-		std::istream& get_input();
-
-		void set_output(std::ostream&);
-		std::ostream& get_output();
+		void set_input(const string_t& in_name);
 		
 		code::code_type read();
 		
 		code::code_type read(string_t&&);
 
-		~console_reader()
-		{}
+		~console_reader() = default;
 		
-		bool ifstream_good() const
-		{
-			return input.get().good();
-		}
+		bool ifstream_good() const;
 		
 
 	private:
@@ -71,7 +65,7 @@ namespace cryptosha
 		std::stack<string_t> input_stack;
 
 		//std::unique_ptr<std::istream> input;
-		std::reference_wrapper<std::istream> input;
-		std::reference_wrapper<std::ostream> output;
+		ifstream_t input;
+		ofstream_t output;
 	};
 }

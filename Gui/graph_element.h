@@ -4,14 +4,22 @@
 #include <QGraphicsLayoutItem>
 #include <QPainter>
 #include <QVector>
+#include <QGraphicsSceneMouseEvent>
+#include <QDebug>
+#include <QCursor>
+#include <QObject>
+#include <memory>
+
 #include "graph_pin.h"
 
-class Graph_Element : public QGraphicsItem
+class GraphElement : public QObject, public QGraphicsItem
 {
+    Q_OBJECT
+
 public:
-    Graph_Element(QGraphicsItem * parent = 0);
-    Graph_Element(int input, int output, QGraphicsItem * parent = 0);
-    Graph_Element(const Graph_Element &) = default;
+	GraphElement(QGraphicsItem * parent = 0);
+	GraphElement(int input, int output, QGraphicsItem * parent = 0);
+	GraphElement(const GraphElement &) = default;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -20,28 +28,46 @@ public:
     void SetPinsCoords();
 
 
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    //void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     QRectF boundingRect() const;
 
     // Inherited from QGraphicsLayoutItem
     /*void setGeometry(const QRectF &geom) Q_DECL_OVERRIDE;
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF()) const Q_DECL_OVERRIDE;*/
-    std::string _name;
-    QVector<graph_pin *> vInPins;
-    QVector<graph_pin *> vOutPins;
+
+	cry::id_t id;
+
+	using gpin_ptr = std::shared_ptr<GraphPin>;
+	QVector<gpin_ptr> vInPins;
+	QVector<gpin_ptr> vOutPins;
     int g_x;
     int g_y;
     int InputPins;
     int OutputPins;
     //Graph_Element & operator=(const Graph_Element & obj);
+
+	int get_width() const
+	{
+		return width;
+	}
+
+signals:
+    void coordChanged();
+
 private:
 
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 
+public:
+	QString type;
+	QString name;
 
-    QString _type;
     int width = 150;
     int height = 50;
+
 
 };
 

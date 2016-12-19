@@ -47,6 +47,7 @@ namespace cry {
 	using   string_t = std::string;
 	using    strings = std::list<string_t>;
 	using   report_t = string_t;
+	using   reports  = std::list<report_t>;
 	using     name_t = string_t;
 	using expression_t = string_t;
 	using expressions = std::list<expression_t>;
@@ -230,7 +231,7 @@ namespace cry {
 			static const string_t shift_right("shift>>");
 			static const string_t cycle_shift_left("<<shift<<");
 			static const string_t cycle_shift_right(">>shift>>");
-			static const string_t p_block("p-block");
+			static const string_t p_block("pblock");
 
 			static const string_t and("and");
 			static const string_t or("or");
@@ -264,7 +265,7 @@ namespace cry {
 
 			static const string_t assinging = string_t("\\s*(.+)\\s*") + keywords::op_assigning + string_t("\\s*(.+)\\s*");
 			static const string_t add = string_t \
-				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,?\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,?\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)?\\s*\\)\\s*");
+				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)\\s*\\)\\s*");
 			static const string_t del = string_t("\\s*del\\s*\\(\\s*@(.+)\\s*\\)\\s*");
 			static const string_t assembly = string_t("\\s*assembly\\s*");
 			static const string_t run = string_t("\\s*run\\s*");
@@ -272,7 +273,7 @@ namespace cry {
 			static const string_t connect = string_t("\\s*connect\\s*\\(\\s*@(.+)\\s*\,\\s*\<\\s*(.+)\\s*\>\\s*\,\\s*@(.+)\\s*\,\\s*\<\\s*(.+)\\s*\>\\s*\\)\\s*");
 			static const string_t m_for = string_t("\\s*for\\s*\\(\\s*(.+)\\s*;\\s*(.+)\\s*;\\s*(.+)\\s*\\)\\s*");
 			static const string_t add_s_p = string_t \
-				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\w)(\<[\\s*\\d+\\s+]+\>)\\s*\,?\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,?\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)?\\s*\\)\\s*");
+				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\w)(\<[\\s*\\w+\\s+]+\>)\\s*\,\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)\\s*\,\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)\\s*\\)\\s*");
 		
 			static const string_t run_element = string_t("\\s*run_element\\s*\\(\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*\\)\\s*");
 			static const string_t run_scheme = string_t("\\s*run_scheme\\s*\\(\\s*\<(.+)\>\\s*\\)\\s*");

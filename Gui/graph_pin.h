@@ -4,12 +4,14 @@
 #include <QGraphicsLayoutItem>
 #include <QPainter>
 
-class graph_pin : public QGraphicsItem
+#include "../QtCryptosha/cryptosha.hpp"
+
+class GraphPin : public QGraphicsItem
 {
 public:
-    graph_pin(QGraphicsItem *parent = 0);
+	GraphPin(QGraphicsItem *parent = 0);
 
-    graph_pin(int val, QGraphicsItem *parent = 0);
+	GraphPin(int val, QGraphicsItem *parent = 0);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -24,7 +26,7 @@ public:
 
     QRectF boundingRect() const;
 
-    void graph_pin::mousePressEvent(QGraphicsSceneMouseEvent *event);
+	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     bool value;
     int g_x;

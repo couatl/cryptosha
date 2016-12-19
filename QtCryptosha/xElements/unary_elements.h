@@ -79,6 +79,7 @@ public:
 	{
 		auto value = vector[m_input.to_ulong()];
 		m_output = bitset_t(m_size.out, value);
+		auto o = m_output;
 		return m_output;
 	}
 

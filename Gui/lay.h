@@ -7,21 +7,21 @@
 #include <QList>
 #include <QPainter>
 
-class lay : public QGraphicsItem
+class Lay : public QGraphicsItem
 {
 public:
 
-lay(QGraphicsItem * parent = 0);
-lay(int x, int y, QGraphicsItem * parent = 0);
+	Lay(QGraphicsItem * parent = 0);
+	Lay(int x, int y, QGraphicsItem * parent = 0);
 
-void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-QRectF boundingRect() const;
+	QRectF boundingRect() const;
 
-QVector<Graph_Element*> listElements;
+	QVector<GraphElement*> listElements;
 
-int g_x;
-int g_y;
+	int g_x;
+	int g_y;
 
 };
 

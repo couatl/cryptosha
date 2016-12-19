@@ -6,37 +6,38 @@
 #include <QGraphicsLinearLayout>
 
 
-Graph_Element::Graph_Element(QGraphicsItem *parent)
+GraphElement::GraphElement(QGraphicsItem *parent)
 {
+    setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
 }
 
-Graph_Element::Graph_Element(int input, int output, QGraphicsItem * parent) : QGraphicsItem(parent)
+GraphElement::GraphElement(int input, int output, QGraphicsItem * parent)
+	: QGraphicsItem(parent)
 {
+    setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     InputPins = input;
     OutputPins = output;
 
+	width = 20 * input;
+
     for (int  i = 0; i < InputPins; ++i)
     {
-        graph_pin * pin = new graph_pin(this);
-        //pin->value = i%2;
-        pin->number = i+1;
-        /*k += width/(InputPins + 1);
-        pin->g_x = g_x+k;
-        pin->g_y = g_y;*/
+		gpin_ptr pin = std::make_shared<GraphPin>(this);
+
+		pin->number = i+1;
+
         vInPins.push_back(pin);
 
     }
 
     for (int  i = 0; i < OutputPins; ++i)
     {
-        graph_pin * pin = new graph_pin(this);
-        //pin->value = i%2;
-        pin->number = i+1;
-        /*k += width/(OutputPins + 1);
-        pin->g_x = g_x+k;
-        pin->g_y = g_y+height;*/
+		gpin_ptr pin = std::make_shared<GraphPin>(this);
+
+		pin->number = i+1;
+
         vOutPins.push_back(pin);
     }
 
@@ -44,7 +45,7 @@ Graph_Element::Graph_Element(int input, int output, QGraphicsItem * parent) : QG
 
 
 
-void Graph_Element::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void GraphElement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
 
@@ -56,14 +57,15 @@ void Graph_Element::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     painter->setPen(QPen(color, 2));
     painter->drawRect(0, 0, width, height);
+	painter->drawText(7,20, name);
 
     for (auto i = vInPins.begin(); i != vInPins.end(); ++i)
     {
         k += width/(InputPins + 1);
         (*i)->setPos(k, 0);
 
-        //qDebug() << (*i)->GetPoint();
     }
+
     k = 0;
 
     for (auto i = vOutPins.begin(); i != vOutPins.end(); ++i)
@@ -76,39 +78,55 @@ void Graph_Element::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 
 
-void Graph_Element::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void GraphElement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsItem::mousePressEvent(event);
-    if(this->isSelected())
-        //qDebug() << "lol" ;
-    update();
+    this->setCursor(QCursor(Qt::ClosedHandCursor));
+    Q_UNUSED(event);
 
 }
 
-void Graph_Element::SetPinsCoords()
+void GraphElement::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    this->setCursor(QCursor(Qt::ArrowCursor));
+    Q_UNUSED(event);
+    emit coordChanged();
+}
+
+void GraphElement::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    g_x = mapToScene(event->pos()).x();
+    g_y = mapToScene(event->pos()).y();
+    this->setPos(mapToScene(event->pos()));
+    SetPinsCoords();
+    emit coordChanged();
+}
+
+void GraphElement::SetPinsCoords()
 {
     int k = 0;
     for (auto i = vInPins.begin(); i != vInPins.end(); ++i)
     {
-        k += width/(InputPins + 1);
-        (*i)->g_x = g_x+k+2;
-        (*i)->g_y = g_y-2;
+		k += width / (InputPins + 1);
+		(*i)->g_x = g_x + k + 2;
+		(*i)->g_y = g_y - 2;
     }
     k = 0;
     for (auto i = vOutPins.begin(); i != vOutPins.end(); ++i)
     {
-        k += width/(OutputPins + 1);
-        (*i)->g_x = g_x+k+2;
-        (*i)->g_y = g_y+height+2;
+		k += width / (OutputPins + 1);
+		(*i)->g_x = g_x + k + 2;
+		(*i)->g_y = g_y + height + 2;
     }
 }
 
 
 
-QRectF Graph_Element::boundingRect() const
+QRectF GraphElement::boundingRect() const
 {
     return QRectF(0, 0, width, height);
 }
+
+
 
 /*Graph_Element & Graph_Element::operator=(const Graph_Element &obj)
 {

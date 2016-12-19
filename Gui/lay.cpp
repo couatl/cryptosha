@@ -2,7 +2,7 @@
 #include <QDebug>
 
 
-lay::lay(QGraphicsItem *parent) : QGraphicsItem(parent)
+Lay::Lay(QGraphicsItem *parent) : QGraphicsItem(parent)
 {
 
     /*setFlag(GraphicsItemFlag::ItemIsSelectable);
@@ -14,7 +14,7 @@ lay::lay(QGraphicsItem *parent) : QGraphicsItem(parent)
 
 }
 
-lay::lay(int _x, int _y, QGraphicsItem *parent) : QGraphicsItem(parent)
+Lay::Lay(int _x, int _y, QGraphicsItem *parent) : QGraphicsItem(parent)
 {
     setPos(_x, _y);
     setFlag(GraphicsItemFlag::ItemIsSelectable);
@@ -31,23 +31,22 @@ lay::lay(int _x, int _y, QGraphicsItem *parent) : QGraphicsItem(parent)
     }
 }
 
-void lay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Lay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     int x = 0;
     painter->setPen(QPen(Qt::white, 1));
     painter->setBrush(Qt::white);
     painter->drawRect(0 , 0, (500+150)*listElements.size(), 150);
-    //qDebug() << pos();
+
+
     for(auto it = listElements.begin(); it != listElements.end(); it++)
     {
-        (*it)->setPos(x + 70, 50);
-
-
-        x += 300;
+		x = (*it)->g_x - this->pos().x();
+		(*it)->setPos(x, 0);
     }
 }
 
-QRectF lay::boundingRect() const
+QRectF Lay::boundingRect() const
 {
     int y = 0;
     int x = 0;

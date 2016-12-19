@@ -1,8 +1,9 @@
 #include "mainwindow.h"
+//#include "../QtCryptosha/easylogging++.h"
 #include <QApplication>
 
 
-
+//INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.draw();
     w.show();
+
+	//LOG(INFO) << "My first info log using default logger";
 
     return a.exec();
 }

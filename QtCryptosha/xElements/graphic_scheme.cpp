@@ -51,7 +51,17 @@ elements::graphic_scheme::graphic_info
 elements::graphic_scheme::graphic_info
 	elements::graphic_scheme::graphic_information(const id_t& id)
 {
-	return graphic_info(id_to_graphic.at(id), element(id)->size());
+	graphic_info ret(id_to_graphic.at(id), element(id)->size());
+
+	for (auto& name_id : m_name_id)
+	{
+		if (name_id.second == id){
+			ret.name = name_id.first.name +"[ " + std::to_string(name_id.first.index) + " ]";
+			break;
+		}
+	}
+
+	return ret;
 }
 
 elements::graphic_scheme::g_info&

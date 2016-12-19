@@ -16,7 +16,8 @@ namespace cryptosha {
 
 		class calculator
 		{
-			struct name_type {
+			struct name_type
+			{
 				using parsed_t = std::list<std::pair<string_t, string_t>>;
 				using key_t = std::string;
 
@@ -66,7 +67,6 @@ namespace cryptosha {
 
 		};
 
-
 		struct handler_t
 		{
 			using cursor_type = code::code_type::iterator;
@@ -80,8 +80,6 @@ namespace cryptosha {
 			vars_t           variables;
 
 		};
-
-
 
 		namespace operations {
 
@@ -130,11 +128,12 @@ namespace cryptosha {
 
 		class interpretator
 		{
+			using reader_ptr = std::unique_ptr<console_reader>;
 			using operation_ptr_t = std::unique_ptr<operations::base>;
 			using operations_t = std::map<code::keyword_t, operation_ptr_t>;
 
 		public:
-			interpretator(size_type text_size, size_type key_size, size_type cipher_size, 
+			/*interpretator(size_type text_size, size_type key_size, size_type cipher_size,
 				std::basic_istream<char, std::char_traits<char>>& in, 
 				std::basic_ostream<char, std::char_traits<char>>& out) 
 				 : reader(in, out)
@@ -149,6 +148,29 @@ namespace cryptosha {
 				operations[code::keyword_t::run] = std::move(operation_ptr_t(new operations::run()));
 
 
+			}*/
+
+			interpretator(const string_t& report_file_name,
+						   const string_t& in_file_name,
+						   const string_t& out_file_name)
+			{
+
+				reader = std::move(reader_ptr(new console_reader(in_file_name, out_file_name)));
+
+				handler.schemes[this_scheme_name] = scheme_ptr(new scheme(16,16,16));
+
+				operations[code::keyword_t::add_element] = std::move(operation_ptr_t(new operations::add_element()));
+				operations[code::keyword_t::assinging] = std::move(operation_ptr_t(new operations::assigning()));
+				operations[code::keyword_t::goto_after] = std::move(operation_ptr_t(new operations::goto_after()));
+				operations[code::keyword_t::connect] = std::move(operation_ptr_t(new operations::connect()));
+				operations[code::keyword_t::assembly] = std::move(operation_ptr_t(new operations::assembly()));
+				operations[code::keyword_t::run] = std::move(operation_ptr_t(new operations::run()));
+			}
+
+
+			scheme_ptr get_scheme()
+			{
+				return handler.schemes[this_scheme_name];
 			}
 
 			interpretator& update_code(code::code_type&& new_code)
@@ -157,44 +179,65 @@ namespace cryptosha {
 				return *this;
 			}
 
-			interpretator& do_code()
+			reports do_code()
 			{
+				reports reports;
+
 				handler.cursor = handler.code.begin();
 
 				while (handler.cursor != handler.code.end()) {
+
+					reports::value_type rep;
+
 					if (!anaconda::calculator::space_free(handler.cursor->condition).size()) {
-						std::cout << operations[handler.cursor->keyword]->doit(handler);
-						std::cout << std::endl;
+						rep = operations[handler.cursor->keyword]->doit(handler);
 					}
 					else{
 						auto scheme = handler.schemes.at(this_scheme_name);
 						if (anaconda::calculator::calculate(handler.cursor->condition, handler.variables, scheme)) {
-							std::cout << operations[handler.cursor->keyword]->doit(handler);
-							std::cout << std::endl;
+							rep = operations[handler.cursor->keyword]->doit(handler);
 						}
-					}	
-					
+					}
+
+					reports.push_back(std::move(rep));
+
 					++handler.cursor;
 				}
 
-				return *this;
+				return reports;
 			}
 
 			interpretator& read()
 			{
-				handler.code = reader.read();
+				handler.code = reader->read();
+				return *this;
+			}
+
+			interpretator& read(string_t&& simple_cmd)
+			{
+				handler.code = reader->read(std::move(simple_cmd));
+				return *this;
+			}
+
+			interpretator& set_new_input(const string_t& input_file_name)
+			{
+
+				reader->set_input(input_file_name);
+
 				return *this;
 			}
 
 			bool ifstream_good() const
 			{
-				return reader.ifstream_good();
+				return reader->ifstream_good();
 			}
+
+			~interpretator() = default;
 
 		private:
 			handler_t      handler;
+			reader_ptr     reader;
 			operations_t   operations;
-			console_reader reader;
 
 		};
 	}

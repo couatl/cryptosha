@@ -11,17 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Cryptosha_graphics
 TEMPLATE = app
 
-QMAKE_LFLAGS += -static -static-libgcc
+QMAKE_LFLAGS += \
+        -static \
+        -static-libgcc
 
 SOURCES += \
-    ../Gui/add_dialog.cpp \
-    ../Gui/graph_element.cpp \
-    ../Gui/graph_layer.cpp \
-    ../Gui/graph_pin.cpp \
-    ../Gui/graph_scene.cpp \
-    ../Gui/graphlayer.cpp \
-    ../Gui/graphscheme.cpp \
-    ../Gui/lay.cpp \
     ../Gui/main.cpp \
     ../Gui/mainwindow.cpp \
     ../QtCryptosha/settings.cpp \
@@ -41,17 +35,14 @@ SOURCES += \
     ../QtCryptosha/Interpretator/cparse/packToken.cpp \
     ../QtCryptosha/Interpretator/cparse/shunting-yard.cpp \
     ../QtCryptosha/Interpretator/cparse/test-shunting-yard.cpp \
-    ../QtCryptosha/Interpretator/reader/Reader.cpp
+    ../QtCryptosha/Interpretator/reader/Reader.cpp \
+    ../Gui/scene_dialog.cpp \
+    ../Gui/graph_element.cpp \
+    ../Gui/graph_pin.cpp \
+    ../Gui/graph_scene.cpp \
+    ../Gui/lay.cpp
 
 HEADERS  += \
-    ../Gui/add_dialog.h \
-    ../Gui/graph_element.h \
-    ../Gui/graph_layer.h \
-    ../Gui/graph_pin.h \
-    ../Gui/graph_scene.h \
-    ../Gui/graphlayer.h \
-    ../Gui/graphscheme.h \
-    ../Gui/lay.h \
     ../Gui/mainwindow.h \
     ../QtCryptosha/cryptosha.hpp \
     ../QtCryptosha/easylogging++.h \
@@ -73,11 +64,17 @@ HEADERS  += \
     ../QtCryptosha/Interpretator/cparse/packToken.h \
     ../QtCryptosha/Interpretator/cparse/shunting-yard.h \
     ../QtCryptosha/Interpretator/cparse/shunting-yard-exceptions.h \
-    ../QtCryptosha/Interpretator/reader/Reader.h
+    ../QtCryptosha/Interpretator/reader/Reader.h \
+    ../Gui/scene_dialog.h \
+    ../Gui/graph_element.h \
+    ../Gui/graph_pin.h \
+    ../Gui/graph_scene.h \
+    ../Gui/lay.h
 
 FORMS    += \
     ../Gui/add_dialog.ui \
-    ../Gui/mainwindow.ui
+    ../Gui/mainwindow.ui \
+    ../Gui/canvas_dialog.ui
 
 QMAKE_CXXFLAGS += -std = c++14;
 

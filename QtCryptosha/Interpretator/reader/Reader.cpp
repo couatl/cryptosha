@@ -210,26 +210,10 @@ namespace funcs
 		else if (res[1].str() == syntax::element_names::p_block)
 			cmd.extra_options.insert({ code::types::add_element::keys::p_vector, ancillary_funcs::str_to_int_vec(res[6].str(), res[5].str()) });
 
-		if (res[7].str().size())
-		{
-			cmd.graphic_x = res[8].str();
-			cmd.graphic_y = res[9].str();
-		}
-		else
-		{
-			cmd.graphic_x = expression_t("");
-			cmd.graphic_y = expression_t("");
-		}
-		if (res[10].str().size())
-		{
-			cmd.graphic_width = res[11].str();
-			cmd.graphic_height = res[12].str();
-		}
-		else
-		{
-			cmd.graphic_width = expression_t("");
-			cmd.graphic_height = expression_t("");
-		}
+		cmd.graphic_x = res[8].str();
+		cmd.graphic_y = res[9].str();
+		cmd.graphic_width = res[11].str();
+		cmd.graphic_height = res[12].str();
 
 		return cmd;
 	}
@@ -277,7 +261,6 @@ namespace funcs
 
 }
 
-
 namespace output
 {
 	string_t err_str("incorrect input");
@@ -286,18 +269,21 @@ namespace output
 	string_t begin_tab_str("     ");
 }
 
-
-
 namespace cryptosha
 {
 
+
+	bool console_reader::ifstream_good() const
+	{
+		return input.good();
+	}
 
 	void console_reader::stack_close()
 	{
 		--num;
 		if (ns_stack.empty())
 		{
-			output.get() << output::err_str << std::endl;
+			output << output::err_str << std::endl;
 			return;
 		}
 		code::code_type code_st_el = ns_stack.top().simple_command_list;
@@ -341,7 +327,7 @@ namespace cryptosha
 		string_t str;
 		std::list<string_t> list;
 		do {
-			getline(input.get(), str);
+			getline(input, str);
 			list = str_to_list(str, syntax::keywords::c_open, syntax::keywords::c_close);
 			str.clear();
 
@@ -356,7 +342,7 @@ namespace cryptosha
 				{
 					if (input_stack.empty())
 					{
-						output.get() << output::err_str << std::endl;
+						output << output::err_str << std::endl;
 						return string_t("");
 					}
 					else
@@ -531,7 +517,7 @@ namespace cryptosha
 				stack_close();
 			else
 			{
-				output.get() << output::err_str << std::endl;
+				output << output::err_str << std::endl;
 				return;
 			}
 			if (!ns_stack.empty())
@@ -542,12 +528,11 @@ namespace cryptosha
 			return;
 		}
 
-
-
 		code_element = simple_cmd_handle(input_str);
+
 		if (code_element.command.empty())
 		{
-			output.get() << output::err_str << std::endl;
+			output << output::err_str << std::endl;
 			return;
 		}
 		if (ns_stack.empty())
@@ -571,7 +556,6 @@ namespace cryptosha
 
 	void console_reader::list_handle(const expressions& list_of_strs)
 	{
-
 		for (auto it : list_of_strs)
 		{
 			cmd_make(it);
@@ -580,7 +564,7 @@ namespace cryptosha
 
 	code::code_type console_reader::read()
 	{
-		output.get() << output::begin_str;
+		output << output::begin_str;
 		string_t str = input_handle();
 
 		if (!ancillary_funcs::space_free(str).size())
@@ -596,9 +580,9 @@ namespace cryptosha
 
 		while (!ns_stack.empty())
 		{
-			output.get() << output::begin_tab_str;
+			output << output::begin_tab_str;
 			for (size_type i = 0; i < num; ++i)
-				output.get() << output::tab_str;
+				output << output::tab_str;
 			string_t str = input_handle();
 
 			list_handle(str_to_list(str));
@@ -630,23 +614,12 @@ namespace cryptosha
 		return result;
 	}
 
-	void console_reader::set_input(std::istream& in)
+	void console_reader::set_input(const string_t& in_name)
 	{
-		input = std::ref(in);
-	}
-	std::istream& console_reader::get_input()
-	{
-		return input.get();
+		input.close();
+		input.open(in_name);
 	}
 
-	void console_reader::set_output(std::ostream& out)
-	{
-		output = std::ref(out);
-	}
-	std::ostream& console_reader::get_output()
-	{
-		return output.get();
-	}
 
 
 }

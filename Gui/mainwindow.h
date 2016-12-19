@@ -2,8 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "graph_scene.h"
 #include <QGraphicsItem>
+
+#include "graph_scene.h"
+#include "../QtCryptosha/cryptosha.hpp"
+
+
 
 namespace Ui {
 	class MainWindow;
@@ -24,19 +28,15 @@ private slots:
 
      void on_pushButton_clicked();
 
-     void on_run_clicked();
-
-
-
-
-
 	 void on_btnRunCode_clicked();
 
-private:
-    Ui::MainWindow *ui;
-    Graph_Scene *scene;
+	 void on_btnDraw_clicked();
 
-	cryptosha::interpretator anaconda;
+private:
+
+	Ui::MainWindow *ui;
+
+	cryptosha::anaconda::interpretator cobra;
 };
 
 #endif // MAINWINDOW_H

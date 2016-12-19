@@ -110,37 +110,37 @@ namespace bf {
 
 class elements::conjunctor : public elements::binary<bf::and>
 {
-public : explicit conjunctor(size_type vector_size) : binary<bf::and>(vector_size) {};
+public : explicit conjunctor(size_type vector_size) : binary<bf::and>(vector_size) {}
 };
 
 class elements::disjunctor : public elements::binary<bf::or>
 {
-public: explicit disjunctor(size_type vector_size) : binary<bf::or>(vector_size) {};
+public: explicit disjunctor(size_type vector_size) : binary<bf::or>(vector_size) {}
 };
 
 class elements::xor : public elements::binary<bf::xor>
 {
-public: explicit xor(size_type vector_size) : binary<bf::xor>(vector_size) {};
+public: explicit xor(size_type vector_size) : binary<bf::xor>(vector_size) {}
 };
 
 class elements::nor : public elements::binary<bf::nor>
 {
-public: explicit nor(size_type vector_size) : binary<bf::nor>(vector_size) {};
+public: explicit nor(size_type vector_size) : binary<bf::nor>(vector_size) {}
 };
 
 class elements::nand : public elements::binary<bf::nand>
 {
-public: explicit nand(size_type vector_size) : binary<bf::nand>(vector_size) {};
+public: explicit nand(size_type vector_size) : binary<bf::nand>(vector_size) {}
 };
 
 class elements::equality : public elements::binary<bf::equal>
 {
-public: explicit equality(size_type vector_size) : binary<bf::equal>(vector_size) {};
+public: explicit equality(size_type vector_size) : binary<bf::equal>(vector_size) {}
 };
 
 class elements::sum : public elements::binary<bf::sum>
 {
-public: explicit sum(size_type vector_size) : binary<bf::sum>(vector_size) {};
+public: explicit sum(size_type vector_size) : binary<bf::sum>(vector_size) {}
 };
 
 
