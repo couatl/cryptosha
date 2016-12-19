@@ -1,7 +1,7 @@
 # Cryptosha
 ---------------------------------------------------
 ### ~~Собирай~~ пиши схемы!
-![image](https://vitashow.ca/wp-content/uploads/2016/10/1242462-cartoons-rick-and-morty-1920x1080-high-quality-hd-wallpapers.jpg)
+![image](https://pp.vk.me/c638520/v638520547/1891c/Dbx3cwTAX1c.jpg)
 ----------------------------------------------------
 
 
@@ -242,7 +242,7 @@ protected:
 	size_type   m_text_size;
 };
 ```
-Конструктор для создания схемы по размерам вхоного текста, ключа и выходного текста:
+Конструктор для создания схемы по размерам входного текста, ключа и выходного текста:
 ```c++ 
 	cipher_scheme(size_type text_size, size_type key_size, size_type out_size);
 ```
