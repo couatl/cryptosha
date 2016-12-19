@@ -70,9 +70,11 @@ Cryptosha - проект, предназначенный для работы с 
 Есть огромное количество подобных проектов с подобным функционалом, но ни один из них не закроет нам семестр по АЯ.
 
 ## Выбор языка программирования, библиотек, фреймворков и среды разработки 
-Графический интерфейс проекта Cryptosha выполнен в среде разработки Qt.
+Проект Cryptosha написан на языке программирования C++.
+Поддержка ООП упрощает задачу разработки программы.
 
-Этот выбор был сделан по причине удобства и широкого функционала данной среды. Также, так как код программы написан на C++, его без проблем можно использовать в Qt. WxWidgets было решено не использовать, так как работа с графическим дизайнером возможна только в Code::Blocks, где это неудобно устроено. Графический дизайнер позволяет существенно сократить написание программы путем уменьшения написанного вручную кода.
+Графический интерфейс проекта Cryptosha выполнен в среде разработки Qt.
+Этот выбор был сделан по причине удобства и широкого функционала данной среды. Графический дизайнер позволяет существенно сократить написание программы путем уменьшения написанного вручную кода.
 
 
 ## Структура проекта как библиотеки
@@ -204,8 +206,37 @@ private methods:
 - s-box
 - p-block
 
+Все элементы унаследованы от базового класса для унарных элементов:
+```c++
+class elements::unary : public elements::basic_element
+{
+public:
+	explicit unary(iosize_t::type vector_size) : basic_element(vector_size, vector_size) {};
+	virtual ~unary() = default;
+};
+```
+Инвертор:
+```c++ invertor(size_type vector_size) : unary(vector_size){};
+```
+Буфер:
+```c++ buffer(size_type vector_size) : unary(vector_size) {};
+```
+Циклический сдвиг влево/вправо:
+```c++
+	explicit shift_left(size_type vector_size,size_type shift_size) : unary(vector_size), m_shift_size(shift_size) {};
+	
+	explicit shift_right(size_type vector_size, size_type shift_size) : unary(vector_size), m_shift_size(shift_size) {};
+```
+S-box:
+```c++
+	explicit simple_sbox(const vector_t& sbox_vector) : unary(log2(sbox_vector.size())), vector(sbox_vector) {}
+```
+P-block:
+```c++
+	explicit permutation_block(const vector_t& pblock_vector) : unary(pblock_vector.size()), vector(pblock_vector) {}
+```
 
-
+У каждого из данных классов переопределен метод `run()`, который и описывает работы элемента.
 
 ### Схема шифрования
 
