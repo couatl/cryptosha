@@ -208,18 +208,20 @@ private methods:
 
 Все элементы унаследованы от базового класса для унарных элементов:
 ```c++
-class elements::unary : public elements::basic_element
-{
-public:
-	explicit unary(iosize_t::type vector_size) : basic_element(vector_size, vector_size) {};
-	virtual ~unary() = default;
-};
+	class elements::unary : public elements::basic_element
+	{
+	public:
+		explicit unary(iosize_t::type vector_size) : basic_element(vector_size, vector_size) {};
+		virtual ~unary() = default;
+	};
 ```
 Инвертор:
-```c++ invertor(size_type vector_size) : unary(vector_size){};
+```c++
+	invertor(size_type vector_size) : unary(vector_size){};
 ```
 Буфер:
-```c++ buffer(size_type vector_size) : unary(vector_size) {};
+```c++
+	buffer(size_type vector_size) : unary(vector_size) {};
 ```
 Циклический сдвиг влево/вправо:
 ```c++
