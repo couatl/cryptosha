@@ -1,6 +1,7 @@
 # Cryptosha
 ---------------------------------------------------
 ### ~~Собирай~~ пиши схемы!
+![image](https://vitashow.ca/wp-content/uploads/2016/10/1242462-cartoons-rick-and-morty-1920x1080-high-quality-hd-wallpapers.jpg)
 ----------------------------------------------------
 
 
