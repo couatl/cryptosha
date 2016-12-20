@@ -446,14 +446,14 @@ public – методы класса:
 ## Язык программирования схем  
 В проекте используется разработанный нами язык программирования.
 Ниже представлены основные команды:  
-- add(type, @name, num_of_in_pins, num_of_out_pins, <svector or pvector>(только для sbox-ов и p-block-ов), <x, y>, <width, height>) -команда добавления элемента.  
-- connect(@name1, <out_pins_vector>, @name2, <in_pins_vector>) - соединение пинов элементов  
-- delete(@name) - удаление элемента  
+- `add(type, @name, num_of_in_pins, num_of_out_pins, <svector or pvector>(только для sbox-ов и p-block-ов), <x, y>, <width, height>)` -команда добавления элемента.  
+- `connect(@name1, <out_pins_vector>, @name2, <in_pins_vector>)` - соединение пинов элементов  
+- `delete(@name)` - удаление элемента  
 - оператор = пример: a = b - пояснения не требуются  
  Далее - команды для криптоанализа:  
-- run_element(@name, <bitset_pool>) - прогон нескольких векторов через элемент  
-- run_scheme(<bitset_pool>) - прогон нескольких векторов через схему  
-- run_layer(layer_number, <bitset_pool>) - прогон нескольких векторов через слой  
+- `run_element(@name, <bitset_pool>)` - прогон нескольких векторов через элемент  
+- `run_scheme(<bitset_pool>)` - прогон нескольких векторов через схему  
+- `run_layer(layer_number, <bitset_pool>)` - прогон нескольких векторов через слой  
 - greatest_potentional -  
 
 Все параметры в <> указываются через запятую, кроме svector и pvector(они - через пробелы)  
