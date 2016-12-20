@@ -29,7 +29,7 @@ void SceneDialog::connect1()
 		is_true = elements[wire.first.id1]->vOutPins[wire.second.pin1]->value;
 
 		if (is_true){
-			lines.push_back(scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::black,2)));
+			lines.push_back(scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::red,1)));
 		}
 		else{
 			lines.push_back(scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::black,1)));
@@ -157,7 +157,7 @@ void SceneDialog::draw()
 		is_true = elements[wire.first.id1]->vOutPins[wire.second.pin1]->value;
 
 		if (is_true){
-			scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::black,2));
+			scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::red,1));
 		}
 		else{
 			scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::black,1));

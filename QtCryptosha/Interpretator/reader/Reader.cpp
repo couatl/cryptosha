@@ -171,26 +171,12 @@ namespace funcs
 		cmd.element_name_index = res[2].str();
 		cmd.element_key = code::name_to_element_key.at(res[1].str());
 		cmd.iosize = iosize_t(stoi(res[3].str()), stoi(res[4].str()));
-		if (res[5].str().size())
-		{
-			cmd.graphic_x = res[6].str();
-			cmd.graphic_y = res[7].str();
-		}
-		else
-		{
-			cmd.graphic_x = string_t("");
-			cmd.graphic_y = string_t("");
-		}
-		if (res[8].str().size())
-		{
-			cmd.graphic_width = res[9].str();
-			cmd.graphic_height = res[10].str();
-		}
-		else
-		{
-			cmd.graphic_width = string_t("");
-			cmd.graphic_height = string_t("");
-		}
+
+		cmd.graphic_x = res[6].str();
+		cmd.graphic_y = res[7].str();
+
+		cmd.graphic_width = res[9].str();
+		cmd.graphic_height = res[10].str();
 
 
 		return cmd;
@@ -225,6 +211,7 @@ namespace funcs
 		std::regex_search(str, res, syntax::regs::run_element);
 		cmd.element_name = res[1].str();
 		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[2].str(), ",");
+		cmd.bit_numbers = ancillary_funcs::simple_str_to_list1(res[3].str(), ",");
 		return cmd;
 	}
 
@@ -233,7 +220,8 @@ namespace funcs
 		code::types::run_scheme cmd;
 		std::smatch res;
 		std::regex_search(str, res, syntax::regs::run_scheme);
-		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[1].str(), ",");
+		cmd.bitset_pool = ancillary_funcs::simple_str_to_list1(res[1].str(), ",");		
+		cmd.bit_numbers = ancillary_funcs::simple_str_to_list1(res[2].str(), ",");
 		return cmd;
 	}
 

@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "../xElements/graphic_scheme.h"
+#include "analysis/analysis.h"
 #include "reader/Reader.h"
 
 namespace cryptosha {	
@@ -123,6 +123,16 @@ namespace cryptosha {
 				report_t doit(handler_t& handler) override;
 			};
 
+			struct run_element : public base
+			{
+				report_t doit(handler_t& handler) override;
+			};
+
+			struct run_scheme : public base
+			{
+				report_t doit(handler_t& handler) override;
+			};
+
 		}
 
 
@@ -165,6 +175,8 @@ namespace cryptosha {
 				operations[code::keyword_t::connect] = std::move(operation_ptr_t(new operations::connect()));
 				operations[code::keyword_t::assembly] = std::move(operation_ptr_t(new operations::assembly()));
 				operations[code::keyword_t::run] = std::move(operation_ptr_t(new operations::run()));
+				operations[code::keyword_t::run_element] = std::move(operation_ptr_t(new operations::run_element()));
+				operations[code::keyword_t::run_scheme] = std::move(operation_ptr_t(new operations::run_scheme()));
 			}
 
 

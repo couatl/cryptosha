@@ -46,10 +46,11 @@ public:
 
 	bitset_pool(const bitset_pool&);
 
+	double get_potentional_of_1(size_type bit) const;
 
 	void add(bitset_t);
 
-	void add(const bitset_pool &);
+	void add(const bitset_pool&);
 
 	bitset_t remove(bitset_t);
 

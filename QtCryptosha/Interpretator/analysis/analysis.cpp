@@ -65,16 +65,13 @@ namespace cryptosha
 		return res;
 	}
 
-	bitset_pool analysis::run_scheme(const bitset_pool & input)
+	analysis::bitset_map analysis::run_scheme(const bitset_pool & input)
 	{
-		bitset_pool res;
+		analysis::bitset_map res;
 		for (size_t i = 0; i < input.size(); i++)
 		{
-			scheme->set_input(input[i]);
-			//pairs[input[i]] = scheme->run();
-			res.add(scheme->run());
+			res.insert({ input[i] , this->scheme->set_text(input[i].to_ulong()).run() });
 		}
-		//std::cout << *this << std::endl;
 		return res;
 	}
 

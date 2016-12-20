@@ -23,7 +23,7 @@ public:
 
 	bitset_map run_element(element_ptr obj, const bitset_pool & input);
 
-	bitset_pool run_scheme(const bitset_pool & input);
+	bitset_map run_scheme(const bitset_pool & input);
 
 	cipher_scheme::id_bitset run_layer(layer_t layer, const bitset_pool & input);
 

@@ -275,8 +275,8 @@ namespace cry {
 			static const string_t add_s_p = string_t \
 				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\w)(\<[\\s*\\w+\\s+]+\>)\\s*\,\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)\\s*\,\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)\\s*\\)\\s*");
 		
-			static const string_t run_element = string_t("\\s*run_element\\s*\\(\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*\\)\\s*");
-			static const string_t run_scheme = string_t("\\s*run_scheme\\s*\\(\\s*\<(.+)\>\\s*\\)\\s*");
+			static const string_t run_element = string_t("\\s*run_element\\s*\\(\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*\,\\s*\<(.+)\>\\s*\\)\\s*"); //run_element(@name[i], <***, 10*, 000> , <>)
+			static const string_t run_scheme = string_t("\\s*run_scheme\\s*\\(\\s*\<(.+)\>\\s*\,\\s*\<(.+)\>\\s*\\)\\s*");
 			static const string_t run_layer = string_t("\\s*run_layer\\s*\\(\\s*(d+)\\s*\,\\s*\<(.+)\>\\s*");
 			static const string_t greatest_potentional = string_t("\\s*greatest_potentional\\s*\\(\\s*@(.+)\\s*\,\\s*@(.+)\\s*\,\\s*\<(.+)\>\\s*");
 		}
@@ -449,7 +449,6 @@ namespace cry {
 				};
 
 				struct _draw {
-
 					using expression_list = std::list<expression_t>;
 
 					expression_list names; ///< if list is empty, Anaconda will draw the whole circuit
@@ -458,10 +457,14 @@ namespace cry {
 				struct _run_element {
 					expression_t element_name;
 					strings bitset_pool;
+
+					expressions bit_numbers;
 				};
 
 				struct _run_scheme {
 					strings bitset_pool;
+
+					expressions bit_numbers;
 				};
 
 				struct _run_layer {

@@ -3,6 +3,8 @@
 
 namespace ns_c_a = cryptosha::anaconda;
 
+
+
 auto ns_c_a::calculator::space_free(const string_t& str) -> string_t
 {
 	auto input_str = str;
@@ -547,4 +549,126 @@ report_t ns_c_a::operations::run::doit(handler_t& handler)
 	return report_t("run...");
 }
 
+report_t ns_c_a::operations::run_element::doit(handler_t& handler)
+{
+	auto option = any_cast<code::types::run_element>(handler.cursor->command);
+
+	auto name_of_scheme = this_scheme_name;
+	auto scheme_ptr = handler.schemes.at(name_of_scheme);
+
+	auto element_name = calculator::calculate_left(option.element_name, handler.variables, scheme_ptr);
+	if (element_name.parsed.size() != 1) {
+		return report_t("invalid name : " + element_name.name);
+	}
+
+	elements::cipher_scheme::full_name_t element_full_name = { element_name.parsed.front().first, foo::to_int_t(element_name.parsed.front().second) };
+
+	auto element_ptr = scheme_ptr->element(element_full_name);
+
+	std::for_each(option.bitset_pool.begin(), option.bitset_pool.end(),
+		[](string_t& str)->string_t
+		{
+			return str = calculator::space_free(str);
+		}
+	);
+
+	cryptosha::bitset_pool bitset_pool(option.bitset_pool);
+
+	if (element_ptr->isize() != bitset_pool.bitset_len()){
+		return report_t(element_name.name + ".input_size != dimension of bitvectors : " +
+					std::to_string(element_ptr->isize()) + " != " +	std::to_string(bitset_pool.bitset_len()) );
+	}
+
+	cryptosha::analysis Danchetto(scheme_ptr);
+
+	cryptosha::analysis::bitset_map in_to_out_bitset = Danchetto.run_element(element_ptr, bitset_pool);
+
+	report_t report = "running element " + element_name.name + " :" +'\n';
+
+	int_vector bit_numbers;
+
+	for (auto str_bit_number : option.bit_numbers)
+	{
+		if (calculator::space_free(str_bit_number).size() == 0){
+			break;
+		}
+
+		bit_numbers.push_back(calculator::calculate(str_bit_number, handler.variables, scheme_ptr));
+	}
+
+	cryptosha::bitset_pool out_bitset_pool;
+
+	for (auto in_to_out : in_to_out_bitset)
+	{
+		out_bitset_pool.add(in_to_out.second);
+		report += "  " + foo::bitset_to_str(in_to_out.first, 4) + " -> " + foo::bitset_to_str(in_to_out.second, 4) + '\n';
+	}
+
+	report += " potentionals of 1 :\n";
+
+	for (auto bit : bit_numbers)
+	{
+		report += "  bit " + std::to_string(bit) + " : " + std::to_string(out_bitset_pool.get_potentional_of_1(bit)) + '\n';
+	}
+
+	return report;
+
+}
+
+report_t ns_c_a::operations::run_scheme::doit(handler_t& handler)
+{
+	auto option = any_cast<code::types::run_scheme>(handler.cursor->command);
+
+	auto name_of_scheme = this_scheme_name;
+	auto scheme_ptr = handler.schemes.at(name_of_scheme);
+
+	std::for_each(option.bitset_pool.begin(), option.bitset_pool.end(),
+		[](string_t& str)->string_t
+		{
+			return str = calculator::space_free(str);
+		}
+	);
+
+	cryptosha::bitset_pool bitset_pool(option.bitset_pool);
+
+	if (scheme_ptr->text_size() != bitset_pool.bitset_len()){
+		return report_t("this_scheme.input_size != dimension of bitvectors : " +
+					std::to_string(scheme_ptr->text_size()) + " != " +	std::to_string(bitset_pool.bitset_len()) );
+	}
+
+	cryptosha::analysis Danchetto(scheme_ptr);
+
+	cryptosha::analysis::bitset_map in_to_out_bitset = Danchetto.run_scheme(bitset_pool);
+
+	report_t report = "running scheme  : \n";
+
+	int_vector bit_numbers;
+
+	for (auto str_bit_number : option.bit_numbers)
+	{
+		if (calculator::space_free(str_bit_number).size() == 0){
+			break;
+		}
+
+		bit_numbers.push_back(calculator::calculate(str_bit_number, handler.variables, scheme_ptr));
+	}
+
+	cryptosha::bitset_pool out_bitset_pool;
+
+	for (auto in_to_out : in_to_out_bitset)
+	{
+		out_bitset_pool.add(in_to_out.second);
+		report += "  " + foo::bitset_to_str(in_to_out.first, 4) + " -> " + foo::bitset_to_str(in_to_out.second, 4) + '\n';
+	}
+
+	report += " potentionals of 1 :\n";
+
+	for (auto bit : bit_numbers)
+	{
+		report += "  bit " + std::to_string(bit) + " : " + std::to_string(out_bitset_pool.get_potentional_of_1(bit)) + '\n';
+	}
+
+	return report;
+
+}
 

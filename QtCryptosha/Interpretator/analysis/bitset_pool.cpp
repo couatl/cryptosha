@@ -110,6 +110,17 @@ namespace cryptosha
 		return pool.size();
 	}
 
+	double bitset_pool::get_potentional_of_1(size_type bit) const
+	{
+		double counter = 0;
+		for (size_type i = 0; i < size(); ++i)
+		{
+			if ((*this)[i][bit])
+			counter++;
+		}
+		return double(counter / size());
+	}
+
 	size_type  bitset_pool::bitset_len() const
 	{
 		return _bitset_len;

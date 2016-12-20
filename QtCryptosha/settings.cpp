@@ -5,19 +5,18 @@ using namespace cry;
 
 
 string_t foo::bitset_to_str(const bitset_t& bs, size_type size)
-	{
-		if (bs.size() != size)
-			throw std::invalid_argument(error_messages::inv_input);
+{
 
-		string_t str("");
+	string_t str("");
+	auto counter = size;
 
-		for (auto i = bs.size() - 1; i >= 0; --i)
-		{
-			str.push_back(bs[i] ? '1' : '0');
-		}
-
+	if (bs.size() == 0)
 		return str;
-	}
+
+	to_string(bs, str);
+
+	return str;
+}
 
 	bitset_t foo::str_to_bitset(const string_t& str_bits, size_type size)
 	{

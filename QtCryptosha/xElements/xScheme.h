@@ -138,7 +138,11 @@ public:
 
 	id_bitset run(const id_pool_t& element_pool);
 
-	
+	size_type key_size() const;
+	size_type text_size() const
+	{
+		return m_text.size();
+	}
 
 	virtual ~cipher_scheme() = default;
 

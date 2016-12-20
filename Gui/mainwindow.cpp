@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	ui->txtCodeEdit->setText(QString(
-"for(q = 1; q; q = 0){ \n \
+"{ \n \
 \n \
 	@text.in = 43106\n \
 	@key.in = 53399\n \
@@ -65,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	run\n \
 \n \
 	cipher = @cipher.out\n \
+	i = 0\n \
+	run_element(@SBOX[0], <**1*, 10*1, 1000>, <i, 2>)\n \
+	run_scheme(<1000 0001 1001 **11>, <0>)\n \
 }" ));
 
 }
