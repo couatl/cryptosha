@@ -232,18 +232,24 @@ private methods:
 ```
 Сдвиг влево/вправо:
 ```c++
-	explicit shift_left(size_type vector_size,size_type shift_size) : unary(vector_size), m_shift_size(shift_size) {};
-												//shift_size - размер сдвига
+	explicit shift_left(size_type vector_size,size_type shift_size) 
+		: unary(vector_size), m_shift_size(shift_size) {};
+	//shift_size - размер сдвига
 	
-	explicit shift_right(size_type vector_size, size_type shift_size) : unary(vector_size), m_shift_size(shift_size) {};
+	explicit shift_right(size_type vector_size, size_type shift_size) 
+		: unary(vector_size), m_shift_size(shift_size) {};
 ```
 S-box:
 ```c++
-	explicit simple_sbox(const vector_t& sbox_vector) : unary(log2(sbox_vector.size())), vector(sbox_vector) {}
+	explicit simple_sbox(const vector_t& sbox_vector) 
+		: unary(log2(sbox_vector.size())), vector(sbox_vector) {}
+			//sbox - вектор подстановок
 ```
 P-block:
 ```c++
-	explicit permutation_block(const vector_t& pblock_vector) : unary(pblock_vector.size()), vector(pblock_vector) {}
+	explicit permutation_block(const vector_t& pblock_vector) 
+		: unary(pblock_vector.size()), vector(pblock_vector) {}
+			//pbox - вектор перестановок
 ```
 
 У каждого из данных классов переопределен метод `run()`, который и описывает работу элемента.
@@ -253,9 +259,9 @@ P-block:
 В проекте предоставляется доступ к следующим бинарным элементам:
 - конъюнкция
 - дизъюнкция
-- сумма по модулю 2
-- стрелка Пирса
-- штрих Шеффера
+- сумма по модулю 2 
+- стрелка Пирса (nor)
+- штрих Шеффера (nand)
 - эквивалентность
 - числовая сумма
 
