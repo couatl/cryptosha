@@ -268,6 +268,7 @@ namespace cry {
 				("\\s*add\\s*\\(\\s*(\\S+)\\s*\,\\s*@(.+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\\d+)\\s*\,\\s*(\<\\s*(.+)\\s*\\,\\s*(.+)\\s*\>)?\\s*\,\\s*(\<\\s*(.+)\\s*\,\\s*(.+)\\s*\>)\\s*\\)\\s*");
 			static const string_t del = string_t("\\s*del\\s*\\(\\s*@(.+)\\s*\\)\\s*");
 			static const string_t assembly = string_t("\\s*assembly\\s*");
+			static const string_t clear_scheme = string_t("\\s*clear\\s*");
 			static const string_t run = string_t("\\s*run\\s*");
 			static const string_t script = string_t("\\s*script\\s*\\((\\w+\\.txt)\\s*\\)\\s*");
 			static const string_t connect = string_t("\\s*connect\\s*\\(\\s*@(.+)\\s*\,\\s*\<\\s*(.+)\\s*\>\\s*\,\\s*@(.+)\\s*\,\\s*\<\\s*(.+)\\s*\>\\s*\\)\\s*");
@@ -285,6 +286,7 @@ namespace cry {
 		{
 			static const std::regex add(regs_str::add);
 			static const std::regex assembly(regs_str::assembly);
+			static const std::regex clear_scheme(regs_str::clear_scheme);
 			static const std::regex run(regs_str::run);
 			static const std::regex del(regs_str::del);
 			static const std::regex script(regs_str::script);
@@ -312,6 +314,7 @@ namespace cry {
 			assembly,
 			run,
 			connect,
+			clear_scheme,
 			disconnect,
 
 			run_element,
@@ -367,6 +370,9 @@ namespace cry {
 
 				struct _free {
 					expression_t value_name;
+				};
+
+				struct _clear_scheme{
 				};
 
 				struct _add_element {
@@ -485,6 +491,7 @@ namespace cry {
 			using goto_after = invis::_goto_after;
 			using free = invis::_free;
 
+			using clear_scheme = invis::_clear_scheme;
 			using add_element = invis::_add_element;
 			using delete_element = invis::_delete_element;
 			using connect = invis::_connect;

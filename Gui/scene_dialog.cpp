@@ -55,6 +55,7 @@ void SceneDialog::drawUnstruct()
 			auto ptr_element = scheme_ptr->element(id);
 
 			auto graph_element = new GraphElement(g_info.iosize.in, g_info.iosize.out);
+			//graph_element->setFlag(QGraphicsItem::ItemIsMovable);
 
 			elements[id] = graph_element;
 
@@ -113,7 +114,8 @@ void SceneDialog::draw()
 			auto ptr_element = scheme_ptr->element(id);
 
 			auto graph_element = new GraphElement(g_info.iosize.in, g_info.iosize.out, ptr_lay);
-			
+
+
 			elements[id] = graph_element;
 
 			for(size_type i = 0; i < ptr_element->input().size(); ++i)
@@ -163,6 +165,8 @@ void SceneDialog::draw()
 			scene->addLine(QLineF(out_pin,in_pin), QPen(Qt::black,1));
 		}
 	}
+
+
 
 
 }

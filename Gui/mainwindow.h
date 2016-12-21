@@ -24,13 +24,11 @@ public:
     void draw();
 
 private slots:
-     void on_add_button_clicked();
-
-     void on_pushButton_clicked();
 
 	 void on_btnRunCode_clicked();
 
 	 void on_btnDraw_clicked();
+
 
 private:
 

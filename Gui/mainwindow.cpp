@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->txtCodeEdit->setText(QString(
 "{ \n \
 \n \
+	clear\n \
 	@text.in = 43106\n \
 	@key.in = 53399\n \
 \n \
@@ -77,21 +78,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
 void MainWindow::draw()
 {
-}
-
-
-void MainWindow::on_add_button_clicked()
-{
-}
-
-void MainWindow::on_pushButton_clicked()
-{
 
 }
-
-
 
 void MainWindow::on_btnRunCode_clicked()
 {
@@ -106,7 +97,8 @@ void MainWindow::on_btnRunCode_clicked()
 
 	for (auto rep : reports)
 	{
-		ui->txtReportEdit->append( QString(rep.c_str()) );
+		if(rep.size())
+			ui->txtReportEdit->append( QString(rep.c_str()) );
 	}
 
 	std::ofstream info("scheme_info.txt");
@@ -123,3 +115,6 @@ void MainWindow::on_btnDraw_clicked()
 	SceneDialog * dialog = new SceneDialog(cobra.get_scheme());
 	dialog->show();
 }
+
+
+

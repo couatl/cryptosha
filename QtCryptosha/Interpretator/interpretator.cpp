@@ -465,6 +465,7 @@ report_t ns_c_a::operations::assigning::doit(handler_t& handler)
 
 report_t ns_c_a::operations::goto_after::doit(handler_t& handler)
 {
+
 	auto it = handler.code.begin();
 
 	auto option = any_cast<code::types::goto_after>(handler.cursor->command);
@@ -474,7 +475,12 @@ report_t ns_c_a::operations::goto_after::doit(handler_t& handler)
 	{
 		if (it->mark == option.mark) {
 			handler.cursor = it;
+
+#ifdef FULL_GEBUG
 			return report_t("moved to mark " + std::to_string(option.mark));
+#else
+			return report_t("");
+#endif
 		}
 	}
 
@@ -669,6 +675,17 @@ report_t ns_c_a::operations::run_scheme::doit(handler_t& handler)
 	}
 
 	return report;
+
+}
+
+report_t ns_c_a::operations::clear_scheme::doit(handler_t& handler)
+{
+	auto name_of_scheme = this_scheme_name;
+
+	handler.schemes[name_of_scheme].reset();
+	handler.schemes[name_of_scheme] = scheme_ptr(new scheme(16,16,16));
+
+	return report_t("new scheme");
 
 }
 

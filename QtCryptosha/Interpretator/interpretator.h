@@ -133,6 +133,11 @@ namespace cryptosha {
 				report_t doit(handler_t& handler) override;
 			};
 
+			struct clear_scheme : public base
+			{
+				report_t doit(handler_t& handler) override;
+			};
+
 		}
 
 
@@ -177,6 +182,7 @@ namespace cryptosha {
 				operations[code::keyword_t::run] = std::move(operation_ptr_t(new operations::run()));
 				operations[code::keyword_t::run_element] = std::move(operation_ptr_t(new operations::run_element()));
 				operations[code::keyword_t::run_scheme] = std::move(operation_ptr_t(new operations::run_scheme()));
+				operations[code::keyword_t::clear_scheme] = std::move(operation_ptr_t(new operations::clear_scheme()));
 			}
 
 
@@ -237,6 +243,12 @@ namespace cryptosha {
 				reader->set_input(input_file_name);
 
 				return *this;
+			}
+
+			interpretator& new_scheme(size_type text_size, size_type key_size, size_type out_size)
+			{
+				handler.schemes[this_scheme_name].reset();
+				handler.schemes[this_scheme_name] = scheme_ptr(new scheme(text_size,key_size,out_size));
 			}
 
 			bool ifstream_good() const

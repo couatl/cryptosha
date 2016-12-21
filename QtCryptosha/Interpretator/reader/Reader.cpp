@@ -369,6 +369,13 @@ namespace cryptosha
 			code_element.mark = mark_number++;
 			code_element.command = 42;
 		}
+		if (std::regex_match(input_str, syntax::regs::clear_scheme))
+		{
+			code_element.keyword = code::keyword_t::clear_scheme;
+			code_element.condition = condition;
+			code_element.mark = mark_number++;
+			code_element.command = 42;
+		}
 		if (std::regex_match(input_str, syntax::regs::run))
 		{
 			code_element.keyword = code::keyword_t::run;

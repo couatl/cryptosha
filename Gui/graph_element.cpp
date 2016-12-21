@@ -8,15 +8,13 @@
 
 GraphElement::GraphElement(QGraphicsItem *parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
 }
 
 GraphElement::GraphElement(int input, int output, QGraphicsItem * parent)
 	: QGraphicsItem(parent)
 {
-    setFlag(QGraphicsItem::ItemIsMovable);
-    setFlag(QGraphicsItem::ItemIsSelectable);
+	setFlag(QGraphicsItem::ItemIsSelectable);
     InputPins = input;
     OutputPins = output;
 

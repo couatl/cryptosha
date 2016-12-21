@@ -76,7 +76,7 @@ FORMS    += \
     ../Gui/mainwindow.ui \
     ../Gui/canvas_dialog.ui
 
-QMAKE_CXXFLAGS += -std = c++14;
+QMAKE_CXXFLAGS += -std=c++14;
 
 DISTFILES += \
     ../QtCryptosha/Interpretator/cparse/LICENSE.mit \
